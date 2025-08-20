@@ -1,10 +1,13 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { NavLink } from 'react-router-dom'
 
 function Login() {
+   const [email,setEmail]=useState("")
+   const [password,setPassword]=useState("")
   const handleSubmit = (e)=>{
     e.preventDefault();
-   
+   console.log(email);
+   console.log(password);
   }
   return (
     <>
@@ -20,13 +23,16 @@ function Login() {
        <div  className='flex flex-col gap-0.5'>
         <label htmlFor="email"> Email</label>
        <input type="email" name="email" id="email"
+       value={email}
+        onChange={(e)=>setEmail(e.target.value)}
        className='border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500'
        />
        </div>
        <div className='flex flex-col gap-0.5'>
         <label htmlFor="pass"> Password</label>
        <input type="password" name="password" id="pass" 
-       
+        value={password}
+        onChange={(e)=>setPassword(e.target.value)}
        className='border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500'/>
        </div>
        <div className='flex justify-center '>
