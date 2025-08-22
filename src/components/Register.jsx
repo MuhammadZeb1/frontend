@@ -1,20 +1,34 @@
 import axios from "axios";
 import React, { useState } from "react";
-import { NavLink } from "react-router-dom";
+import { Navigate, NavLink, useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 
 function Register() {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [name, setName] = useState("");
-  const [role, setRole] = useState("");
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    password: "",
+    role: "",
+  });
+  const navigate = useNavigate();
 
+
+  // handle input changes
+  const getFormData = (e) => {
+    const { name, value } = e.target;
+    setFormData((prevData) => ({
+      ...prevData,
+      [name]: value,
+    }));
+  };
+
+  // form submit
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!name || !email || !password) {
-      alert("Please fill all fields");
-      return;
-    }
+    const { name, email, password, role } = formData;
+
+    
 
     try {
       const res = await axios.post("http://localhost:1212/auth/register", {
@@ -25,10 +39,13 @@ function Register() {
       });
 
       console.log("Response:", res.data);
-      alert("User registered successfully");
+      toast.success(res.data.message || "User registered successfully!");
+      
+      navigate("/login")
     } catch (error) {
+      console.log("")
       console.error("Error:", error.response?.data || error.message);
-      alert("Error registering user");
+      // toast.error(error.response?.data?.message || "Error registering user");
     }
   };
 
@@ -49,8 +66,9 @@ function Register() {
           <input
             type="text"
             id="name"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
+            name="name"
+            value={formData.name}
+            onChange={getFormData}
             className="border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
         </div>
@@ -60,8 +78,9 @@ function Register() {
           <input
             type="email"
             id="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
+            name="email"
+            value={formData.email}
+            onChange={getFormData}
             className="border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
         </div>
@@ -71,20 +90,27 @@ function Register() {
           <input
             type="password"
             id="pass"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
+            name="password"
+            value={formData.password}
+            onChange={getFormData}
             className="border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
         </div>
 
         <div>
-          <label htmlFor="role">select role</label>
-           <select name="role" id="role" value={role} onChange={(e)=> setRole(e.target.value)} >
-
-            <option value="Customer">Customer</option>
-            <option value="delivery">delivery</option>
-            <option value="vendor">vendor</option>
-           </select>
+          <label htmlFor="role">Select Role</label>
+          <select
+            name="role"
+            id="role"
+            value={formData.role}
+            onChange={getFormData}
+            className="border border-gray-300 rounded px-3 py-2 w-full focus:outline-none focus:ring-2 focus:ring-blue-500"
+          >
+            <option value="">-- Select Role --</option>
+            <option value="customer">Customer</option>
+            <option value="delivery">Delivery</option>
+            <option value="vendor">Vendor</option>
+          </select>
         </div>
 
         <button
