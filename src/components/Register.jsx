@@ -2,6 +2,7 @@ import axios from "axios";
 import React, { useState } from "react";
 import { Navigate, NavLink, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
+import axiosInstance from "../utils/axiosInstance";
 
 function Register() {
   const [formData, setFormData] = useState({
@@ -31,7 +32,7 @@ function Register() {
     
 
     try {
-      const res = await axios.post("http://localhost:1212/auth/register", {
+      const res = await axiosInstance.post("/auth/register", {
         name,
         email,
         password,

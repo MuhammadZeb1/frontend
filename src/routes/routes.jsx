@@ -1,31 +1,17 @@
-// src/routes/routes.js
-import Header from "../components/Header";
+// routes/routes.js
+import CreateProduct from "../components/CreateProduct";
 import Home from "../components/Home";
 import Login from "../components/Login";
 import Register from "../components/Register";
 
-
-const routes = [
-  {
-    path: "/",
-    element: <Home />,
-    
-  },
-  {
-    path: "/login",
-    element: <Login />,
-  },
-  {
-    path: "/register",
-    element: <Register />,
-    
-  },
-  // {
-  //   path: "/header",
-  //   element: <Header />,
-    
-  // },
- 
+// Public routes (always visible)
+export const publicRoutes = [
+  { path: "/", element: <Home /> },
+  { path: "/login", element: <Login /> },
+  { path: "/register", element: <Register /> },
 ];
 
-export default routes;
+// Protected routes (require login)
+export const privateRoutes = [
+  { path: "/createProduct", element: <CreateProduct /> },
+];

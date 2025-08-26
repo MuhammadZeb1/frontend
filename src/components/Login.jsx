@@ -4,6 +4,7 @@ import { toast } from "react-toastify";
 import axios from "axios"; // ✅ axios import
 import { useDispatch } from "react-redux";
 import { setCredentials } from "../features/AuthSlice"; // ✅ import the action
+import axiosInstance from "../utils/axiosInstance";
 function Login() {
   const [formData, setFormData] = useState({
     email: "",
@@ -23,7 +24,7 @@ function Login() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const res = await axios.post("http://localhost:1212/auth/login", formData);
+      const res = await axiosInstance.post("/auth/login", formData);
       console.log("Response:", res.data);
       toast.success(res.data.message || "User logged in successfully!");
       navgiate("/")
