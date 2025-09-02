@@ -16,7 +16,7 @@ export const publicRoutes = [
 // Protected routes (require login)
 export const privateRoutes = [
   { path: "/createProduct", element: <CreateProduct /> },
-  { path: "/updateProduct", element: <UpdateProduct /> },
+  { path: "/updateProduct/:id", element: <UpdateProduct /> },
   { path: "/readProduct", element: <ReadProduct /> },
   
 ];

@@ -3,7 +3,8 @@ import axiosInstance from "../utils/axiosInstance.js";
 const initialState = {
     product : [],
     isLoading :false,
-    error:null
+    error:null,
+    message :null
 }
 
 
@@ -31,10 +32,13 @@ const readProductSlice = createSlice({
         builder.addCase(getProduct.fulfilled,(state,action)=>{
             state.isLoading = false
             state.product = action.payload.products
-            console.log("action",action.payload.message)
+            state.message = action.payload.message
+            console.log("fulfilled state",state.message);
         })
         builder.addCase(getProduct.rejected,(state)=>{
             state.isLoading = false
+            state.error = action.payload?.message || "Something went wrong";
+            console.log("Error message:", state.error)
         })
     }
 
