@@ -29,7 +29,7 @@ function Header() {
 
         {/* Navigation Links */}
         {token ? (
-          <div className="flex gap-4 mr-5 items-center">
+          <div className="flex gap-4 mr-5 items-center focus:scale-40">
             {headerlinks.map(({ path, label }, index) => (
               <NavLink 
                 key={index}
@@ -61,9 +61,9 @@ function Header() {
                 key={index}
                 to={path}
                 className={({ isActive }) =>
-                  `px-4 py-1 rounded-xl text-lg transition duration-300 ${
+                  `px-4 py-1 rounded-xl text-lg transition duration-300 focus:scale-150 ${
                     isActive 
-                      ? "bg-blue-600 text-white font-bold shadow-md" 
+                      ? "bg-blue-600 text-white font-bold shadow-md " 
                       : "bg-gray-300 text-gray-700 hover:bg-gray-400"
                   }`
                 }

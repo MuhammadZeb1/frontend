@@ -1,9 +1,11 @@
 import React, { useState } from "react";
 import axiosInstance from "../utils/axiosInstance";
 import { toast } from "react-toastify";
+import { Navigate, useNavigate } from "react-router-dom";
 
 function CreateProduct() {
   const [isLoading, setIsLoading] = useState(false);
+  const navigate = useNavigate()
   const [formData, setFormData] = useState({
     productName: "",
     title: "",
@@ -53,6 +55,7 @@ function CreateProduct() {
         count: "",
       });
       console.log("response:", res.data);
+      navigate("/readProduct")
       
     } catch (error) {
       toast.error(error.response?.data?.message || "Error creating product");

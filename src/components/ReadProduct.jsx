@@ -3,7 +3,6 @@ import { getProduct } from "../features/readProductSlice";
 import { useEffect } from "react";
 import { toast } from "react-toastify";
 import { RiDeleteBin6Line } from "react-icons/ri";
-import { IoAddCircle } from "react-icons/io5";
 import axiosInstance from "../utils/axiosInstance";
 import { NavLink } from "react-router-dom";
 import UpdateProduct from "./UpdateProduct";
