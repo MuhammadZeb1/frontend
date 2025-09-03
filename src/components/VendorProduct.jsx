@@ -2,12 +2,13 @@ import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
 import { getVendorProducts } from "../features/vendorProductsSlice";
+import { toast } from "react-toastify";
 
 function VendorProduct() {
   const { id } = useParams(); // vendor id from URL
   const dispatch = useDispatch();
 
-  const {vendor, products, isLoading, error } = useSelector(
+  const {vendor, products, isLoading, error,message } = useSelector(
     (state) => state.vendorProduct
   );
   console.log(vendor)
@@ -15,8 +16,9 @@ function VendorProduct() {
   useEffect(() => {
     if (id) {
       dispatch(getVendorProducts(id));
+      //  fetched.current = true;
     }
-  }, [id, dispatch]);
+  }, [id,dispatch]);
 
   if (isLoading) {
     return <p className="text-center mt-10 text-lg">Loading products...</p>;
@@ -25,7 +27,7 @@ function VendorProduct() {
   if (error) {
     return <p className="text-center mt-10 text-red-500">{error}</p>;
   }
-
+    // toast.success("fetch product succeessfully")
   return (
   <div className="p-6 ">
     {products.length > 0 && products[0].vendor && (

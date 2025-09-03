@@ -35,12 +35,17 @@ const vendorProductSlice = createSlice({
         state.isLoading = false;
         state.vendor = action.payload.vendor;
         state.products = action.payload.products;
-        state.message = "Vendor products fetched successfully ✅";
-        toast.success(state.message);
+        state.message = action.payload?.message || "fetch product successfully";
+
+        // Show toast with the message
+        if (state.message) {
+          toast.success(state.message);
+        }
       })
       .addCase(getVendorProducts.rejected, (state, action) => {
         state.isLoading = false;
-        state.error = action.payload?.message || "Failed to fetch vendor products";
+        state.error =
+          action.payload?.message || "Failed to fetch vendor products";
         toast.error(state.error);
       });
   },
