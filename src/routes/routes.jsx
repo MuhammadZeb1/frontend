@@ -1,4 +1,5 @@
 // routes/routes.js
+import CartPage from "../components/CartPage";
 import CreateProduct from "../components/CreateProduct";
 import Deshborad from "../components/Deshborad";
 import Home from "../components/Home";
@@ -23,4 +24,5 @@ export const privateRoutes = [
   // costomer
   { path: "/deshboard",role:"customer", element: <Deshborad /> },
   { path: "/vendorProduct/:id",role:"customer", element: <VendorProduct /> },
+  { path: "/cartPage",role:"customer", element: <CartPage /> },
 ];
