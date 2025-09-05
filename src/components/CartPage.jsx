@@ -44,6 +44,11 @@ function CartPage() {
               className="flex items-center justify-between bg-white shadow p-4 rounded-xl"
             >
               <div>
+                <img
+                  src={item.productId.image?.url}
+                  alt="the product image"
+                  className="w-20 h-20 object-cover rounded-lg"
+                />
                 <h3 className="font-semibold">{item.productId.productName}</h3>
                 <p className="text-gray-600">Price: ${item.productId.price}</p>
                 <p className="text-gray-600">Qty: {item.quantity}</p>
