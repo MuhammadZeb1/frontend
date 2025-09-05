@@ -32,45 +32,61 @@ function CartPage() {
 
   return (
     <div className="p-6">
-      <h2 className="text-2xl font-bold mb-4">🛒 Your Cart</h2>
+      <>
+        <div className="flex justify-between ">
+          <h2 className="text-2xl font-bold  ">🛒 Your Cart</h2>
+
+          <h3 className="text-xl font-bold">Total: ${totalPrice}</h3>
+        </div>
+      </>
 
       {cartItems.length === 0 ? (
-        <p className="text-gray-500">Your cart is empty</p>
+        <>
+          <p className="text-gray-500">Your cart is empty</p>
+          
+        </>
       ) : (
-        <div className="space-y-4">
-          {cartItems.map((item) => (
-            <div
-              key={item.productId._id}
-              className="flex items-center justify-between bg-white shadow p-4 rounded-xl"
-            >
-              <div>
+        <>
+          {/* ✅ Grid Layout (VendorProduct style) */}
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+            {cartItems.map((item) => (
+              <div
+                key={item.productId._id}
+                className="bg-white shadow rounded-2xl p-4 hover:shadow-lg transition flex flex-col"
+              >
                 <img
                   src={item.productId.image?.url}
-                  alt="the product image"
-                  className="w-20 h-20 object-cover rounded-lg"
+                  alt={item.productId.productName}
+                  className="w-full h-40 object-cover rounded-lg mb-3"
                 />
-                <h3 className="font-semibold">{item.productId.productName}</h3>
-                <p className="text-gray-600">Price: ${item.productId.price}</p>
+                <h3 className="text-lg font-semibold">
+                  {item.productId.productName}
+                </h3>
                 <p className="text-gray-600">Qty: {item.quantity}</p>
                 <p className="text-gray-600">Vendor: {item.address}</p>
-                <p className="font-bold">
+                <p className="text-blue-600 font-bold mt-1">
+                  ${item.productId.price}
+                </p>
+                <p className="font-bold text-gray-700 mt-1">
                   Subtotal: ${item.productId.price * item.quantity}
                 </p>
+
+                <button
+                  onClick={() => removeFromCart(item.productId._id)}
+                  className="mt-3 bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 transition"
+                >
+                  Remove
+                </button>
               </div>
-              <button
-                onClick={() => removeFromCart(item.productId._id)}
-                className="bg-red-500 text-white px-3 py-1 rounded-lg hover:bg-red-600"
-              >
-                Remove
-              </button>
-            </div>
-          ))}
+            ))}
+          </div>
 
           {/* ✅ Total Price */}
-          <div className="text-right mt-6">
+          {/* <div className="text-right mt-6">
             <h3 className="text-xl font-bold">Total: ${totalPrice}</h3>
-          </div>
-        </div>
+          </div> */}
+        </>
       )}
     </div>
   );
