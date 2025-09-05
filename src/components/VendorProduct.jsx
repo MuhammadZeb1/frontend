@@ -12,6 +12,7 @@ function VendorProduct() {
   const { vendor, products, isLoading, error } = useSelector(
     (state) => state.vendorProduct
   );
+  console.log(vendor,"hhhhh")
 
   useEffect(() => {
     if (id) {
@@ -27,27 +28,29 @@ function VendorProduct() {
     return <p className="text-center mt-10 text-red-500">{error}</p>;
   }
 
-  const addToCart = async(productId)=>{
-     try {
-      const res = await axiosInstance.post("/carts/addToCart",
-      {
+ const addToCart = async (productId, address) => {
+  try {
+    const res = await axiosInstance.post("/carts/addToCart", {
       productId,
-       quantity: 1,
-     }
-     )
-     toast.success(res.data.message)
-     console.log("response",res.data)
-     } catch (error) {
-      
-     }
-     
+      quantity: 1,
+      address,
+    });
+    toast.success(res.data.message);
+    console.log("response", res.data);
+  } catch (error) {
+    console.error("❌ Add to cart error:", error.response?.data || error.message);
+    toast.error(error.response?.data?.message || "Failed to add to cart");
   }
+};
+
+
 
   return (
     <div className="p-6 ">
       {products.length > 0 && products[0].vendor && (
         <div className="mb-6 text-center">
           <h2 className="text-2xl font-bold">{vendor.shopName}</h2>
+          <h2 className="text-2xl font-bold">{vendor.address}</h2>
           <p className="text-gray-600">{vendor.shopType}</p>
           <p className="text-gray-500 text-sm">
             Owner: {vendor.name} ({vendor.email})
@@ -76,7 +79,7 @@ function VendorProduct() {
 
               {/* ✅ Only Add to Cart Button */}
               <button
-                onClick={() => addToCart(`${p._id}`)}
+                onClick={() => addToCart(p._id,vendor.address)}
                 className="mt-3 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition"
               >
                 Add to Cart

@@ -47,6 +47,7 @@ function CartPage() {
                 <h3 className="font-semibold">{item.productId.productName}</h3>
                 <p className="text-gray-600">Price: ${item.productId.price}</p>
                 <p className="text-gray-600">Qty: {item.quantity}</p>
+                <p className="text-gray-600">Vendor: {item.address}</p>
                 <p className="font-bold">
                   Subtotal: ${item.productId.price * item.quantity}
                 </p>
