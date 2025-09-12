@@ -1,9 +1,11 @@
 // routes/routes.js
+import Buy from "../components/Buy";
 import CartPage from "../components/CartPage";
 import CreateProduct from "../components/CreateProduct";
 import Deshborad from "../components/Deshborad";
 import Home from "../components/Home";
 import Login from "../components/Login";
+import PurchasePage from "../components/PurchasePage";
 import ReadProduct from "../components/ReadProduct";
 import Register from "../components/Register";
 import UpdateProduct from "../components/UpdateProduct";
@@ -25,4 +27,6 @@ export const privateRoutes = [
   { path: "/deshboard",role:"customer", element: <Deshborad /> },
   { path: "/vendorProduct/:id",role:"customer", element: <VendorProduct /> },
   { path: "/cartPage",role:"customer", element: <CartPage /> },
+  { path: "/buy/:id",role:"customer", element: <Buy /> },
+  { path: "/purchases",role:"customer", element: <PurchasePage /> },
 ];

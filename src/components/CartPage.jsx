@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import axiosInstance from "../utils/axiosInstance";
+import { Link } from "react-router-dom";
 
 function CartPage() {
   const [cartItems, setCartItems] = useState([]);
@@ -43,7 +44,6 @@ function CartPage() {
       {cartItems.length === 0 ? (
         <>
           <p className="text-gray-500">Your cart is empty</p>
-          
         </>
       ) : (
         <>
@@ -72,12 +72,21 @@ function CartPage() {
                   Subtotal: ${item.productId.price * item.quantity}
                 </p>
 
-                <button
-                  onClick={() => removeFromCart(item.productId._id)}
-                  className="mt-3 bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 transition"
-                >
-                  Remove
-                </button>
+                <div className="flex gap-2 justify-between">
+                  <button
+                    onClick={() => removeFromCart(item.productId._id)}
+                    className="mt-3 bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 transition"
+                  >
+                    Remove
+                  </button>
+
+                  <Link
+                    to={`/buy/${item.productId._id}`}
+                    className="mt-3 bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition"
+                  >
+                    Buy
+                  </Link>
+                </div>
               </div>
             ))}
           </div>
