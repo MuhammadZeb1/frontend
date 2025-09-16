@@ -4,6 +4,7 @@ import readProductReducer from "../features/readProductSlice.jsx";
 import getVendorReducer from "../features/deshboardSlice.jsx"
 import getVendorProductReducer from "../features/vendorProductsSlice.jsx"
 import getPruchaseReducer from "../features/purchaseSlice.jsx"
+import getAllProductsReducer from "../features/GetProductsSlice.jsx";
 
 
 export const store = configureStore({
@@ -13,6 +14,8 @@ export const store = configureStore({
     vendors: getVendorReducer, 
     vendorProduct: getVendorProductReducer,
     purchase: getPruchaseReducer,
+    allProducts:getAllProductsReducer
+
   }
 });
 

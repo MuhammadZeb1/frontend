@@ -4,7 +4,8 @@ const initialState = {
     product : [],
     isLoading :false,
     error:null,
-    message :null
+    message :null,
+    ali:"ali"
 }
 
 
