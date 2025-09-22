@@ -1,44 +1,47 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import axiosInstance from "../utils/axiosInstance";
 
 const initialState = {
-  vendorPurchases: [],
-  loading: false,
+  purchase: [],
+  isLoading: false,
   error: null,
+  message: null,
 };
-
-export const fetchVendorPurchases = createAsyncThunk(
-  "vendorPurchases/fetchVendorPurchases",
-  async (vendorId, { rejectWithValue }) => {    
+const getVendorPurchase = createAsyncThunk(
+  "Vendorpurchase/getVendorPurchase",
+  async (_, { rejectWithValue }) => {
     try {
-        const response = await fetch(`/api/vendor/${vendorId}/purchases`);
-        if (!response.ok) {
-            throw new Error('Network response was not ok');
-        }
-        const data = await response.json();
-        return data;
-    } catch (error) {
-        return rejectWithValue(error.message);
+      const response = await axiosInstance.get("/purchase/vendorPurchase");
+      console.log("API response:", response.data);
+
+      return response.data;
+    } catch (err) {
+      return rejectWithValue(err.response?.data || err.message);
     }
   }
-);                
-export const vendorPurchasesSlice = createSlice({
-  name: "vendorPurchases",
+);
+
+const getVendorPurchaseSlice = createSlice({
+  name: "purchase",
   initialState,
-  reducers: {},
   extraReducers: (builder) => {
-    builder
-      .addCase(fetchVendorPurchases.pending, (state) => {
-        state.loading = true;
-        state.error = null;
-      })
-      .addCase(fetchVendorPurchases.fulfilled, (state, action) => {
-        state.loading = false;
-        state.vendorPurchases = action.payload;
-      })
-      .addCase(fetchVendorPurchases.rejected, (state, action) => {
-        state.loading = false;
-        state.error = action.payload;
-      });
-  },                
-});                
-export default vendorPurchasesSlice.reducer;                
+    builder.addCase(getVendorPurchase.pending, (state) => {
+      state.isLoading = true;
+      console.log("pending state");
+    });
+    builder.addCase(getVendorPurchase.fulfilled, (state, action) => {
+      state.isLoading = false;
+      state.purchase = action.payload.purchases;
+      state.message = action.payload.message;
+      console.log("fulfilled state", state.message);
+    });
+    builder.addCase(getVendorPurchase.rejected, (state, action) => {
+      state.isLoading = false;
+      console.log("Rejected error payload:", action.payload);
+      console.log("Rejected error object:", action.error);
+    });
+  },
+});
+
+export default getVendorPurchaseSlice.reducer;
+export { getVendorPurchase };

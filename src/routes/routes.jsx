@@ -3,7 +3,8 @@ import Buy from "../components/Buy";
 import CartPage from "../components/CartPage";
 import CreateProduct from "../components/CreateProduct";
 import Deshborad from "../components/Deshborad";
-import GetProductOfVendor from "../components/GetProductOfVendor";
+// import GetProductOfVendor from "../components/GetProductOfVendor";
+import GetPurchaseOfVendor from "../components/GetPurchaseOfVendor";
 import Home from "../components/Home";
 import Login from "../components/Login";
 import PurchasePage from "../components/PurchasePage";
@@ -30,5 +31,5 @@ export const privateRoutes = [
   { path: "/cartPage",role:"customer", element: <CartPage /> },
   { path: "/buy/:id",role:"customer", element: <Buy /> },
   { path: "/purchases",role:"customer", element: <PurchasePage /> },
-  { path: "/GetVendorPurchases",role:"vendor", element: <GetProductOfVendor /> },
+  { path: "/GetVendorPurchases",role:"vendor", element: <GetPurchaseOfVendor /> },
 ];
