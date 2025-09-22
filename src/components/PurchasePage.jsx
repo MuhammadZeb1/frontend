@@ -34,7 +34,7 @@ function PurchasePage() {
   }, 0);
 
   return (
-    <div className="p-6">
+    <div className="p-6 blue-300">
       <div className="flex justify-between mb-4">
         <h2 className="text-2xl font-bold">🛍️ Your Purchases</h2>
         {message && <p className="text-green-600 font-semibold">{message}</p>}

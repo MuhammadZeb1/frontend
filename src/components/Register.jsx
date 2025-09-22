@@ -61,7 +61,7 @@ function Register() {
   };
 
   return (
-    <div className="flex justify-center items-center h-screen bg-gradient-to-r from-blue-50 to-blue-100 overflow-hidden">
+    <div className="flex justify-center items-center  h-screen bg-gradient-to-r from-blue-100 to-blue-200 overflow-hidden">
       {/* Form Container with Entrance Animation */}
       <motion.form
         onSubmit={handleSubmit}
