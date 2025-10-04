@@ -7,9 +7,9 @@ function Footer() {
   return (
     <>
            {/* Footer */}
-        <footer className="grid grid-cols-1 md:grid-cols-3 gap-6 text-sm">
-          <div>
-            <div className="flex items-center  ">
+        <footer className="flex justify-between flex-wrap gap-20">
+          <div className='text-center'>
+            <div className="  ">
               <img src={logo} alt="Logo" className="h-10 w-10 rounded-full" />
               <h1 className="text-lg text-blue-900">MyEcommerce</h1>
             </div>
@@ -34,7 +34,7 @@ function Footer() {
               <li>WhatsApp</li>
             </ul>
           </div>
-          <div className="text-right">
+          <div className="text-center md:text-right">
             <h2 className="font-semibold mb-2 text-blue-900">© 2025</h2>
             <ul className="space-y-1 text-gray-900">
               <li>Terms & Conditions</li>

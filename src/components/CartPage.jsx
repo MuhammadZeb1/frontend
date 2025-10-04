@@ -58,7 +58,7 @@ function CartPage() {
                 <img
                   src={item.productId.image?.url}
                   alt={item.productId.productName}
-                  className="w-full h-40 object-cover rounded-lg mb-3"
+                  className="w-full h-40 object-fit rounded-lg mb-3"
                 />
                 <h3 className="text-lg font-semibold">
                   {item.productId.productName}
