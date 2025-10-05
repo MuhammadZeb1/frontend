@@ -29,7 +29,7 @@ function GetPurchaseOfVendor() {
             >
               {/* Product Image */}
               <img
-                className="w-full h-56 object-cover rounded-t-lg"
+                className="w-full h-56 object-fit rounded-t-lg"
                 src={item.productId?.image?.url || "/placeholder.png"}
                 alt={item.productId?.productName}
               />

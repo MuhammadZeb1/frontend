@@ -6,6 +6,7 @@ import getVendorProductReducer from "../features/vendorProductsSlice.jsx"
 import getPruchaseReducer from "../features/purchaseSlice.jsx"
 import getAllProductsReducer from "../features/GetProductsSlice.jsx";
 import getVendorPurchaseReducer from "../features/GetVendorPurchaseSlice.jsx";
+import getAllDeliveryReducer from "../features/GetAllDeliverySlice.jsx"
 
 
 
@@ -17,7 +18,8 @@ export const store = configureStore({
     vendorProduct: getVendorProductReducer,
     purchase: getPruchaseReducer,
     allProducts:getAllProductsReducer,
-    vendorPurchase:getVendorPurchaseReducer
+    vendorPurchase:getVendorPurchaseReducer,
+    allDelivery:getAllDeliveryReducer
 
 
   }

@@ -13,7 +13,7 @@ function App() {
   const { token } = useSelector((state) => state.auth);
 
   return (
-    <>
+    < >
       <ToastContainer position="top-right" autoClose={3000} />
       <Header />
 

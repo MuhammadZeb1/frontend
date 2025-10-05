@@ -3,6 +3,7 @@ import Buy from "../components/Buy";
 import CartPage from "../components/CartPage";
 import CreateProduct from "../components/CreateProduct";
 import Deshborad from "../components/Deshborad";
+import GetAllDelivery from "../components/GetAllDelivery";
 // import GetProductOfVendor from "../components/GetProductOfVendor";
 import GetPurchaseOfVendor from "../components/GetPurchaseOfVendor";
 import Home from "../components/Home";
@@ -32,4 +33,5 @@ export const privateRoutes = [
   { path: "/buy/:id",role:"customer", element: <Buy /> },
   { path: "/purchases",role:"customer", element: <PurchasePage /> },
   { path: "/GetVendorPurchases",role:"vendor", element: <GetPurchaseOfVendor /> },
+  { path: "/geAllDelivery",role:"vendor", element: <GetAllDelivery /> },
 ];
