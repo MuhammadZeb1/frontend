@@ -37,7 +37,7 @@ const deliverySlice = createSlice({
         state.isLoading = false;
         state.deliveries = action.payload.deliveries; // ✅ API سے "deliveries" key آ رہا ہے
         state.message = "Delivery users fetched successfully";
-        console.log("Deliveries:", state.deliveries);
+        console.log( state.deliveries);
 
         console.log("Deliveries:", state.deliveries);
       })

@@ -16,14 +16,27 @@ function GetAllDelivery() {
   if (isLoading) return <p>Loading deliveries...</p>;
   if (error) return <p style={{ color: "red" }}>{error}</p>;
 
+  const approved = (id) => {
+    alert(`Approved ID: ${id}`);
+    // آگے چل کر یہاں آپ API call بھی لگا سکتے ہیں مثلاً:
+    // dispatch(approveDelivery(id))
+  };
+
   return (
     <div>
       <h2>All Delivery Users</h2>
       <ul>
         {deliveries && deliveries.length > 0 ? (
           deliveries.map((d) => (
-            <li key={d._id}>
-              <strong>{d.name}</strong> – {d.email} ({d.address})
+            <li key={d._id} className="mb-4 border p-3 rounded shadow">
+              <p><strong>Name:</strong> {d.name}</p>
+              <p><strong>Email:</strong> {d.email}</p>
+              <button
+                className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded mt-2"
+                onClick={() => approved(d._id)}
+              >
+                Approve
+              </button>
             </li>
           ))
         ) : (

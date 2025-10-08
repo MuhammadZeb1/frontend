@@ -33,5 +33,5 @@ export const privateRoutes = [
   { path: "/buy/:id",role:"customer", element: <Buy /> },
   { path: "/purchases",role:"customer", element: <PurchasePage /> },
   { path: "/GetVendorPurchases",role:"vendor", element: <GetPurchaseOfVendor /> },
-  { path: "/geAllDelivery",role:"vendor", element: <GetAllDelivery /> },
+  { path: "/getAllDelivery",role:"vendor", element: <GetAllDelivery /> },
 ];
