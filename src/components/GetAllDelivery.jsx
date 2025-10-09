@@ -1,6 +1,7 @@
 import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { getDeliveries } from "../features/GetAllDeliverySlice";
+import axiosInstance from "../utils/axiosInstance";
 
 function GetAllDelivery() {
   const dispatch = useDispatch();
@@ -16,11 +17,17 @@ function GetAllDelivery() {
   if (isLoading) return <p>Loading deliveries...</p>;
   if (error) return <p style={{ color: "red" }}>{error}</p>;
 
-  const approved = (id) => {
-    alert(`Approved ID: ${id}`);
-    // آگے چل کر یہاں آپ API call بھی لگا سکتے ہیں مثلاً:
-    // dispatch(approveDelivery(id))
-  };
+const approved = async (id) => {
+  try {
+    const res = await axiosInstance.post("/allDelivery/postDelivery", { deliveryId: id });
+    alert("Approved successfully ✅");
+    console.log(res.data);
+  } catch (err) {
+    console.error(err);
+    alert("Failed to approve ❌");
+  }
+};
+
 
   return (
     <div>

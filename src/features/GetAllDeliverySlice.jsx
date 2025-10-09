@@ -14,7 +14,7 @@ export const getDeliveries = createAsyncThunk(
   "delivery/getDeliveries",
   async (_, { rejectWithValue }) => {
     try {
-      const response = await axiosInstance.get("/allDelivery/allDelivery");
+      const response = await axiosInstance.get("/allDelivery/getDelivery");
       return response.data; // { deliveries: [...] }
     } catch (err) {
       return rejectWithValue(err.response?.data || err.message);
