@@ -1,4 +1,5 @@
 // routes/routes.js
+import ApproveDelivery from "../components/ApproveDelivery";
 import Buy from "../components/Buy";
 import CartPage from "../components/CartPage";
 import CreateProduct from "../components/CreateProduct";
@@ -34,4 +35,5 @@ export const privateRoutes = [
   { path: "/purchases",role:"customer", element: <PurchasePage /> },
   { path: "/GetVendorPurchases",role:"vendor", element: <GetPurchaseOfVendor /> },
   { path: "/getAllDelivery",role:"vendor", element: <GetAllDelivery /> },
+  { path: "/GetDelivery",role:"vendor", element: <ApproveDelivery /> },
 ];
