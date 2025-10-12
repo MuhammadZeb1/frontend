@@ -68,7 +68,7 @@ function VendorProduct() {
               <img
                 src={p.image?.url}
                 alt={p.productName}
-                className="w-full h-40 object-cover rounded-lg mb-3"
+                className="w-full h-70 object-fit rounded-lg mb-3"
               />
               <h3 className="text-lg font-semibold">{p.productName}</h3>
               <p className="text-gray-600">{p.title}</p>

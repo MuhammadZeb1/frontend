@@ -7,6 +7,7 @@ import Deshborad from "../components/Deshborad";
 import GetAllDelivery from "../components/GetAllDelivery";
 // import GetProductOfVendor from "../components/GetProductOfVendor";
 import GetPurchaseOfVendor from "../components/GetPurchaseOfVendor";
+import GiveDelivery from "../components/GiveDelivery";
 import Home from "../components/Home";
 import Login from "../components/Login";
 import PurchasePage from "../components/PurchasePage";
@@ -36,4 +37,5 @@ export const privateRoutes = [
   { path: "/GetVendorPurchases",role:"vendor", element: <GetPurchaseOfVendor /> },
   { path: "/getAllDelivery",role:"vendor", element: <GetAllDelivery /> },
   { path: "/GetDelivery",role:"vendor", element: <ApproveDelivery /> },
+  { path: "/giveDelivery/:id",role:"vendor", element: <GiveDelivery /> },
 ];
