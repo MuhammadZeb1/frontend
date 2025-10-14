@@ -1,5 +1,5 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import axiosInstance from "../utils/axiosInstance";
+import axiosInstance from "../utils/axiosInstance.js";
 
 const initialState = {
   purchase: [],
