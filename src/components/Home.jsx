@@ -50,7 +50,7 @@ function Home() {
   };
 
   return (
-    <div className="bg-gradient-to-r from-blue-300 to-blue-300 min-h-screen text-white">
+    <div className="bg-transparent min-h-screen text-white">
       <div className="container mx-auto p-2">
         {/* Header */}
         <header className="flex justify-between items-center ">
