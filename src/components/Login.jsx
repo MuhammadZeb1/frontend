@@ -37,7 +37,7 @@ function Login() {
   };
 
   return (
-    <div className="flex justify-center items-center h-screen bg-gradient-to-r from-blue-50 to-blue-100 overflow-hidden">
+    <div className="flex justify-center items-center h-screen bg-gradient-to-r bg-transparent overflow-hidden">
       {/* Animate form */}
       <motion.form
         onSubmit={handleSubmit}

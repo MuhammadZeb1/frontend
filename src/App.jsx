@@ -5,15 +5,17 @@ import { useSelector } from "react-redux";
 import Header from "./components/Header";
 import { Elements } from "@stripe/react-stripe-js";
 import { loadStripe } from "@stripe/stripe-js";
+import VendorRoute from "./components/VendorRoute";
+import VendorLayout from "./components/VendorLayout";
 
 const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_KEY);
 
-
 function App() {
   const { token } = useSelector((state) => state.auth);
+  console.log("token ", token);
 
   return (
-    < >
+    <>
       <ToastContainer position="top-right" autoClose={3000} />
       <Header />
 
@@ -24,21 +26,24 @@ function App() {
         ))}
 
         {/* Private routes */}
-        {privateRoutes.map(({ path, element }, index) => {
-          // Wrap Buy page with Stripe Elements
-          if (path === "/buy/:id") {
+        {privateRoutes.map(({ path, element, role }, index) => {
+          // ✅ Vendor Protected Routes
+          if (role === "vendor") {
             return (
               <Route
                 key={index}
                 path={path}
-                element={<Elements stripe={stripePromise}>{element}</Elements>}
+                element={
+                  <VendorRoute>
+                    <VendorLayout>{element}</VendorLayout>
+                  </VendorRoute>
+                }
               />
             );
           }
-          // Other private routes
-          return token ? (
-            <Route key={index} path={path} element={element} />
-          ) : null;
+
+          // ✅ Other private routes
+          return token ? <Route key={index} path={path} element={element} /> : null;
         })}
 
         {/* Catch-all route */}

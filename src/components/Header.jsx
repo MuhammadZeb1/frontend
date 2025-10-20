@@ -18,7 +18,7 @@ function Header() {
 
   return (
     <div className="container px-3 py-2">
-      <div className="flex justify-between mt-1 bg-gray-200 items-center rounded-lg shadow-md">
+      <div className="flex justify-between mt-1 bg-transparent items-center rounded-lg shadow-md">
         
         {/* Logo */}
         <img 
@@ -61,7 +61,7 @@ function Header() {
                 key={index}
                 to={path}
                 className={({ isActive }) =>
-                  `px-4 py-1 rounded-xl text-lg transition duration-300 focus:scale-110 ${
+                  `px-7 py-1 rounded-xl text-lg transition duration-300 focus:scale-110 ${
                     isActive 
                       ? "bg-blue-600 text-white font-bold shadow-md " 
                       : "bg-gray-300 text-gray-700 hover:bg-gray-400"
