@@ -32,7 +32,7 @@ const VendorSidebar = () => {
   ];
 
   return (
-    <aside className="h-screen w-64 bg-blue-300 border-r shadow-sm sticky top-0">
+    <aside className="h-screen  bg-blue-300 border-r shadow-sm sticky top-0">
       <div className="flex flex-col h-full">
         <div className="px-6 py-5 border-b">
           <h1 className="text-lg font-semibold">image</h1>
