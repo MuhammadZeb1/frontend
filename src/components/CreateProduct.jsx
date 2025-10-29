@@ -59,11 +59,7 @@ function CreateProduct() {
   };
 
   return (
-    
-    <>
-    <div className="bg-amber-200">hello</div>
-    <div className="flex justify-center  items-center min-h-screen bg-blue-200 px-4 py-8">
-      
+    <div className="flex justify-center items-center min-h-screen bg-transparent px-4 py-8">
       <motion.form
         onSubmit={handleSubmit}
         encType="multipart/form-data"
@@ -194,7 +190,6 @@ function CreateProduct() {
         </motion.button>
       </motion.form>
     </div>
-    </>
   );
 }
 

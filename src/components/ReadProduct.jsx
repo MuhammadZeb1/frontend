@@ -59,38 +59,54 @@ function ReadProduct() {
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 ">
         {product.length > 0 ? (
           product.map((p) => (
-            <div
-              key={p._id}
-              className="bg-white shadow-md rounded-2xl p-4 border hover:shadow-lg transition hover:scale-103"
-            >
-              <img
-                src={p.image.url}
-                alt={p.productName}
-                className="w-full h-50 object-cover rounded-lg mb-3"
-              />
-              <h3 className="text-lg font-semibold">{p.productName}</h3>
-              <p className="text-gray-600">{p.title}</p>
-              <p className="text-blue-600 font-bold mt-2">${p.price}</p>
-              <p className="text-sm text-gray-500 mt-1">
-                Category: {p.category}
-              </p>
-              <div className="mt-2 p-4">
-                <div className="flex gap-4 justify-between">
+    <div
+  key={p._id}
+  className="relative bg-white border border-gray-200 rounded-3xl shadow-md hover:shadow-xl transition-all duration-500 hover:-translate-y-1 overflow-hidden group"
+>
+  {/* Product Image with Hover Buttons */}
+  <div className="relative w-full h-56 overflow-hidden rounded-t-3xl">
+    <img
+      src={p.image?.url}
+      alt={p.productName}
+      className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+    />
 
-                  <NavLink to={`/updateProduct/${p._id}`}>
-                    <button className="text-green-900 text-3xl">
-                    <MdSecurityUpdate />
-                  </button>
-                    </NavLink>             
-                  <button
-                    onClick={() => deleteProduct(p._id)} // ✅ delete only here
-                    className="text-red-900 text-3xl"
-                  >
-                    <RiDeleteBin6Line />
-                  </button>
-                </div>
-              </div>
-            </div>
+    {/* Category Badge */}
+    <span className="absolute top-3 right-3 bg-blue-600 text-white text-xs font-medium px-3 py-1 rounded-full shadow-lg">
+      {p.category}
+    </span>
+
+    {/* ✅ Hover Buttons Over Image */}
+    <div className="absolute inset-0 flex items-center justify-center gap-4 bg-black/40 opacity-0 group-hover:opacity-100 transition-all duration-300">
+      <NavLink
+        to={`/updateProduct/${p._id}`}
+        className="bg-white text-blue-700 hover:bg-blue-600 hover:text-white px-4 py-2 rounded-full text-sm font-semibold shadow"
+      >
+        Update
+      </NavLink>
+      <button
+        onClick={() => deleteProduct(p._id)}
+        className="bg-white text-red-700 hover:bg-red-600 hover:text-white px-4 py-2 rounded-full text-sm font-semibold shadow"
+      >
+        Delete
+      </button>
+    </div>
+  </div>
+
+  {/* ✅ Product Details Always Visible */}
+  <div className="p-5">
+    <h3 className="text-lg font-semibold text-gray-800">{p.productName}</h3>
+    <p className="text-sm text-gray-500 mt-1 line-clamp-2">{p.title}</p>
+    <div className="flex justify-between items-center mt-4">
+      <span className="text-xl font-bold text-emerald-600">${p.price}</span>
+      <span className="text-xs font-semibold bg-yellow-100 text-yellow-700 px-3 py-1 rounded-full">
+        In Stock: {p.count}
+      </span>
+    </div>
+  </div>
+</div>
+
+
           ))
         ) : (
           <p className="col-span-full text-center text-gray-500">
