@@ -140,6 +140,7 @@ function Register() {
                 placeholder="Create a password"
               />
             </div>
+            
           </motion.div>
 
           {/* CNIC */}

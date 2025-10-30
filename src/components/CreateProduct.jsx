@@ -59,7 +59,7 @@ function CreateProduct() {
   };
 
   return (
-    <div className="flex justify-center items-center min-h-screen bg-transparent px-4 py-8">
+    <div className="flex justify-center items-center min-h-screen bg-gradient-to-r from-blue-200 to-purple-100 px-4 py-8">
       <motion.form
         onSubmit={handleSubmit}
         encType="multipart/form-data"

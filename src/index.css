@@ -1,8 +1,27 @@
 @import "tailwindcss";
+/* @plugin "daisyui"; */
 
+/* ✅ Your styles below */
 html, body, #root {
   margin: 0;
   padding: 0;
   height: 100%;
   background-color: #93C5FD;
+}
+
+/* ✅ DaisyUI placeholder fix */
+.input input::placeholder,
+.input-bordered input::placeholder,
+.input-primary input::placeholder,
+.input-secondary input::placeholder,
+.input-accent input::placeholder,
+textarea.input::placeholder {
+  color: rgb(55, 65, 81) !important; /* Tailwind gray-700 */
+  opacity: 1 !important;
+}
+
+input::placeholder,
+textarea::placeholder {
+  color: rgb(55, 65, 81) !important;
+  opacity: 1 !important;
 }

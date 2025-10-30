@@ -7,8 +7,8 @@ export const navLinks = [
   { path: "/login", label: <LogIn className="size-8"/> },
 //   { path: "/header", label: "Header" },
   { path: "/register", label: "Register" },
+  { path: "/", label: "my profile" },
 ];
 export const headerlinks= [
-  { path: "/createProduct", label: <IoAddCircle className="size-8"/> },
-  { path: "/readProduct", label: "product" },
+  
 ]

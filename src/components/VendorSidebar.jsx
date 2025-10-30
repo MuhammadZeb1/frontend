@@ -21,14 +21,14 @@ const VendorSidebar = () => {
   if (decoded.role !== "vendor") return null;
 
   const navItems = [
-    { title: "Dashboard", to: "/vendor/dashboard", icon: <LayoutDashboard size={18} /> },
+    // { title: "Dashboard", to: "/vendor/dashboard", icon: <LayoutDashboard size={18} /> },
     { title: "Create Product", to: "/createProduct", icon: <Package size={18} /> },
     { title: "My Products", to: "/readProduct", icon: <ClipboardList size={18} /> },
     { title: "Purchases", to: "/GetVendorPurchases", icon: <ClipboardList size={18} /> },
     { title: "All Deliveries", to: "/getAllDelivery", icon: <Truck size={18} /> },
     { title: "Approve Delivery", to: "/GetDelivery", icon: <CheckSquare size={18} /> },
     { title: "Assigned Delivery", to: "/getVendorAssignDelivery", icon: <Truck size={18} /> },
-    { title: "Profile", to: "/vendor/profile", icon: <User size={18} /> },
+    // { title: "Profile", to: "/vendor/profile", icon: <User size={18} /> },
   ];
 
   return (
