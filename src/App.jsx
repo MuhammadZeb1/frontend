@@ -4,9 +4,10 @@ import { Routes, Route } from "react-router-dom";
 import { publicRoutes, privateRoutes } from "./routes/routes";
 import { ToastContainer } from "react-toastify";
 import { useSelector } from "react-redux";
+import { jwtDecode } from "jwt-decode";
 import Header from "./components/Header";
 import VendorLayout from "./components/VendorLayout";
-import ProtectedRoute from "./components/ProtectedRoute"; // ✅ Correct import
+import ProtectedRoute from "./components/ProtectedRoute";
 import { Elements } from "@stripe/react-stripe-js";
 import { loadStripe } from "@stripe/stripe-js";
 
@@ -15,11 +16,24 @@ const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_KEY);
 function App() {
   const { token } = useSelector((state) => state.auth);
 
+  // ✅ Decode user role
+  let role = null;
+  if (token) {
+    try {
+      const decoded = jwtDecode(token);
+      role = decoded.role?.toLowerCase();
+    } catch (error) {
+      console.error("Invalid token");
+    }
+  }
+
   return (
     <>
-      {/* ✅ Toasts */}
+      {/* ✅ Toast Notifications */}
       <ToastContainer position="top-right" autoClose={3000} />
-      <Header />
+
+      {/* ✅ Header hide for vendor */}
+      {role !== "vendor" && <Header />}
 
       <Routes>
         {/* ✅ Public routes */}
@@ -72,7 +86,7 @@ function App() {
             />
           ))}
 
-        {/* ✅ Fallback Route */}
+        {/* ✅ 404 Fallback */}
         <Route path="*" element={<h1>404 Not Found</h1>} />
       </Routes>
     </>
