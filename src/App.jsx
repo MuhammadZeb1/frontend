@@ -1,93 +1,58 @@
-// src/App.jsx
 import React from "react";
-import { Routes, Route } from "react-router-dom";
-import { publicRoutes, privateRoutes } from "./routes/routes";
+import { Routes, Route, Navigate } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
 import { useSelector } from "react-redux";
 import { jwtDecode } from "jwt-decode";
-import Header from "./components/Header";
-import VendorLayout from "./components/VendorLayout";
-import ProtectedRoute from "./components/ProtectedRoute";
-import { Elements } from "@stripe/react-stripe-js";
-import { loadStripe } from "@stripe/stripe-js";
+import Navbar from "./components/Navbar";
 
-const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_KEY);
+// ✅ Import route arrays
+import { publicRoutes, vendorRoutes, customerRoutes, deliveryRoutes } from "./routes/routes";
 
 function App() {
   const { token } = useSelector((state) => state.auth);
 
-  // ✅ Decode user role
+  // ✅ Decode user role from JWT token
   let role = null;
   if (token) {
     try {
       const decoded = jwtDecode(token);
       role = decoded.role?.toLowerCase();
+      console.log("Decoded role:", role);
     } catch (error) {
       console.error("Invalid token");
     }
   }
 
+  // ✅ Choose routes according to user role
+  const getRoutes = () => {
+    if (role === "vendor") return vendorRoutes;
+    if (role === "customer") return customerRoutes;
+    if (role === "delivery") return deliveryRoutes;
+    return [];
+  };
+
   return (
     <>
-      {/* ✅ Toast Notifications */}
+      {/* ✅ Toast notifications */}
       <ToastContainer position="top-right" autoClose={3000} />
 
-      {/* ✅ Header hide for vendor */}
-      {role !== "vendor" && <Header />}
+      {/* ✅ Navbar (visible on all pages) */}
+      <Navbar />
 
+      {/* ✅ Routes */}
       <Routes>
-        {/* ✅ Public routes */}
+        {/* 🌍 Public Routes */}
         {publicRoutes.map(({ path, element }, index) => (
           <Route key={index} path={path} element={element} />
         ))}
 
-        {/* ✅ Vendor Protected Routes */}
-        {privateRoutes
-          .filter((route) => route.role === "vendor")
-          .map(({ path, element }, index) => (
-            <Route
-              key={index}
-              path={path}
-              element={
-                <ProtectedRoute allowedRoles={["vendor"]}>
-                  <VendorLayout>{element}</VendorLayout>
-                </ProtectedRoute>
-              }
-            />
-          ))}
+        {/* 🔒 Role-Based Routes */}
+        {getRoutes().map(({ path, element }, index) => (
+          <Route key={index} path={path} element={element} />
+        ))}
 
-        {/* ✅ Customer Protected Routes */}
-        {privateRoutes
-          .filter((route) => route.role === "customer")
-          .map(({ path, element }, index) => (
-            <Route
-              key={index}
-              path={path}
-              element={
-                <ProtectedRoute allowedRoles={["customer"]}>
-                  {element}
-                </ProtectedRoute>
-              }
-            />
-          ))}
-
-        {/* ✅ Delivery Protected Routes */}
-        {privateRoutes
-          .filter((route) => route.role === "delivery")
-          .map(({ path, element }, index) => (
-            <Route
-              key={index}
-              path={path}
-              element={
-                <ProtectedRoute allowedRoles={["delivery"]}>
-                  {element}
-                </ProtectedRoute>
-              }
-            />
-          ))}
-
-        {/* ✅ 404 Fallback */}
-        <Route path="*" element={<h1>404 Not Found</h1>} />
+        {/* ⚠️ Redirect if route not found */}
+        <Route path="*" element={<Navigate to="/" />} />
       </Routes>
     </>
   );

@@ -3,108 +3,113 @@ import logo from "../assets/web-logo.png";
 import { NavLink, useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { jwtDecode } from "jwt-decode";
+import { logout } from "../features/AuthSlice";
 
 function Header() {
   const { token } = useSelector((state) => state.auth);
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  // Decode token to get role
-  
   let role = null;
   if (token) {
     try {
       const decoded = jwtDecode(token);
-      role = decoded.role;
-      console.log("role ", role);
+      role = decoded.role?.toLowerCase();
     } catch (error) {
       console.error("Invalid token");
     }
   }
 
-  // 🔹 Logout
   const handleLogout = () => {
-    dispatch({ type: "auth/logout" });
+    dispatch(logout());
     navigate("/login");
   };
 
-  // 🔹 Role-based navigation links
-  let roleLinks = [];
-
-  if (role === "vendor") {
-    roleLinks = [
-      { path: "/readProduct", label: "My Products" },
-      { path: "/createProduct", label: "Add Product" },
-      { path: "/GetVendorPurchases", label: "Purchases" },
-      { path: "/getAllDelivery", label: "Deliveries" },
-    ];
-  } else if (role === "customer") {
-    roleLinks = [
-      { path: "/deshboard", label: "Dashboard" },
-      { path: "/cartPage", label: "Cart" },
-      { path: "/purchases", label: "My Orders" },
-    ];
-  } else if (role === "delivery") {
-    roleLinks = [
-      { path: "/getDeliveryAssign", label: "Assigned Deliveries" },
-    ];
-  }
-
-  // 🔹 Default public links (no token)
-  const publicLinks = [
-    { path: "/", label: "Home" },
-    { path: "/login", label: "Login" },
-    { path: "/register", label: "Register" },
-  ];
-
   return (
-    <div className="container px-3 py-2">
-      <div className="flex justify-between mt-1 bg-transparent items-center rounded-lg shadow-md">
-        {/* Logo */}
-        <img src={logo} alt="Website Logo" className="w-16 h-auto ml-5" />
+    <div className="w-full bg-[#b3d9ff] py-3 shadow-md">
+      <div className="container mx-auto flex justify-between items-center px-5">
+        {/* ✅ Logo */}
+        <div className="flex items-center gap-2">
+          <img src={logo} alt="Logo" className="w-10" />
+          <h2 className="text-2xl font-bold text-gray-800">MyEcommerce</h2>
+        </div>
 
-        {/* Navigation Links */}
-        <div className="flex gap-4 mr-5 items-center">
-          {token
-            ? roleLinks.map(({ path, label }) => (
-                <NavLink
-                  key={path}
-                  to={path}
-                  className={({ isActive }) =>
-                    `px-4 py-1 rounded-xl text-lg transition duration-300 ${
-                      isActive
-                        ? "bg-blue-600 text-white font-bold shadow-md"
-                        : "bg-gray-300 text-gray-700 hover:bg-gray-400"
-                    }`
-                  }
-                >
-                  {label}
-                </NavLink>
-              ))
-            : publicLinks.map(({ path, label }) => (
-                <NavLink
-                  key={path}
-                  to={path}
-                  className={({ isActive }) =>
-                    `px-4 py-1 rounded-xl text-lg transition duration-300 ${
-                      isActive
-                        ? "bg-blue-600 text-white font-bold shadow-md"
-                        : "bg-gray-300 text-gray-700 hover:bg-gray-400"
-                    }`
-                  }
-                >
-                  {label}
-                </NavLink>
-              ))}
+        {/* ✅ Navbar Buttons */}
+        <div className="flex items-center gap-3">
+          {/* ---- Not Logged In ---- */}
+          {!token && (
+            <>
+              <NavLink
+                to="/login"
+                className="bg-blue-500 text-white px-4 py-1 rounded-xl hover:bg-blue-600"
+              >
+                Login
+              </NavLink>
+              <NavLink
+                to="/register"
+                className="bg-green-500 text-white px-4 py-1 rounded-xl hover:bg-green-600"
+              >
+                Register
+              </NavLink>
+            </>
+          )}
 
-          {/* 🔹 Logout Button (only if logged in) */}
-          {token && (
+          {/* ---- Vendor ---- */}
+          {token && role === "vendor" && (
             <button
               onClick={handleLogout}
-              className="px-4 py-1 rounded-xl text-lg bg-red-500 text-white hover:bg-red-600 transition duration-300"
+              className="bg-red-500 text-white px-4 py-1 rounded-xl hover:bg-red-600"
             >
               Logout
             </button>
+          )}
+
+          {/* ---- Customer ---- */}
+          {token && role === "customer" && (
+            <>
+              <NavLink
+                to="/deshboard"
+                className="bg-gray-300 px-4 py-1 rounded-xl hover:bg-gray-400"
+              >
+                Dashboard
+              </NavLink>
+              <NavLink
+                to="/cartPage"
+                className="bg-gray-300 px-4 py-1 rounded-xl hover:bg-gray-400"
+              >
+                Cart
+              </NavLink>
+              <NavLink
+                to="/purchases"
+                className="bg-gray-300 px-4 py-1 rounded-xl hover:bg-gray-400"
+              >
+                My Orders
+              </NavLink>
+              <button
+                onClick={handleLogout}
+                className="bg-red-500 text-white px-4 py-1 rounded-xl hover:bg-red-600"
+              >
+                Logout
+              </button>
+            </>
+          )}
+
+          {/* ---- Delivery ---- */}
+          {token && role === "delivery" && (
+            <>
+              <NavLink
+                to="/getDeliveryAssign"
+                className="bg-gray-300 px-4 py-1 rounded-xl hover:bg-gray-400"
+              >
+                Assigned Deliveries
+              </NavLink>
+              <button
+                onClick={handleLogout}
+                className="bg-red-500 text-white px-4 py-1 rounded-xl hover:bg-red-600"
+              >
+                Logout
+              </button>
+            </>
           )}
         </div>
       </div>

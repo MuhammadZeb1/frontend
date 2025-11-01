@@ -58,6 +58,7 @@ function Home() {
             <img src={logo} alt="Logo" className="h-10 w-10 rounded-full" />
             <h1 className="text-xl font-semibold">MyEcommerce</h1>
           </div>
+          <button>logout</button>
         </header> 
 
         {/* Hero */}
