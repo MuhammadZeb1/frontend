@@ -56,10 +56,11 @@ function ReadProduct() {
       {/* Error fallback in UI */}
       {error && <div className="text-red-500 mb-4">{error}</div>}
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 ">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 w-300 ">
         {product.length > 0 ? (
           product.map((p) => (
     <div
+    
   key={p._id}
   className="relative bg-white border border-gray-200 rounded-3xl shadow-md hover:shadow-xl transition-all duration-500 hover:-translate-y-1 overflow-hidden group"
 >
