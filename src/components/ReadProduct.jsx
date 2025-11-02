@@ -1,120 +1,195 @@
 import { useDispatch, useSelector } from "react-redux";
 import { getProduct } from "../features/readProductSlice";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
-import { RiDeleteBin6Line } from "react-icons/ri";
 import axiosInstance from "../utils/axiosInstance";
 import { NavLink } from "react-router-dom";
-import UpdateProduct from "./UpdateProduct";
-import { MdSecurityUpdate } from "react-icons/md";
+import { motion } from "framer-motion";
 
 function ReadProduct() {
   const { product, isLoading, error, message } = useSelector(
     (state) => state.product
   );
 
+  console.log("product ", product);
   const dispatch = useDispatch();
 
-  // Fetch products on mount
+  const [searchTerm, setSearchTerm] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState("All");
+
   useEffect(() => {
     dispatch(getProduct());
   }, [dispatch]);
 
-  // delete product
   const deleteProduct = async (id) => {
     try {
       const res = await axiosInstance.delete(`/product/products/${id}`);
-      toast.success(res.data.message); // ✅ correct response
-      dispatch(getProduct()); // ✅ refresh products after delete
+      toast.success(res.data.message);
+      dispatch(getProduct());
     } catch (error) {
       toast.error(error.response?.data?.message || "Delete failed");
     }
   };
 
-  // Show error in toast
   useEffect(() => {
-    if (error) {
-      toast.error(error);
-    }
+    if (error) toast.error(error);
   }, [error]);
 
-  // Show success message in toast
   useEffect(() => {
-    if (message) {
-      toast.success(message);
-    }
+    if (message) toast.success(message);
   }, [message]);
 
   if (isLoading) {
-    return <p className="text-center mt-10 text-lg">Loading...</p>;
+    return (
+      <p className="text-center mt-10 text-lg text-blue-700">Loading...</p>
+    );
   }
 
+  // ✅ Fixed categories based on enum
+  const categories = [
+    "All",
+    "grocery",
+    "electronics",
+    "clothing",
+    "pharmacy",
+    "other",
+  ];
+
+  const filteredProducts = product.filter((p) => {
+    const matchesSearch = p.productName
+      ?.toLowerCase()
+      .includes(searchTerm.toLowerCase());
+    const matchesCategory =
+      selectedCategory === "All" || p.category === selectedCategory;
+    return matchesSearch && matchesCategory;
+  });
+
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    show: { opacity: 1, transition: { staggerChildren: 0.15 } },
+  };
+
+  const cardVariants = {
+    hidden: { opacity: 0, y: 50 },
+    show: { opacity: 1, y: 0, transition: { duration: 0.6, ease: "easeOut" } },
+  };
+
   return (
-    <div className="p-6">
-      <h2 className="text-2xl font-bold mb-4">Products</h2>
+    <div className="min-h-screen bg-gradient-to-br from-blue-100 via-white to-blue-200 px-6 py-10">
+      {/* ✅ Header Row with Title + Search/Filter */}
+      <div className="flex flex-col md:flex-row justify-between items-center gap-4 mb-10 max-w-6xl mx-auto">
+        {/* Left: Title */}
+        <motion.h2
+          initial={{ opacity: 0, x: -20 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.7 }}
+          className="text-3xl md:text-4xl font-extrabold text-blue-800 drop-shadow-sm text-center md:text-left"
+        >
+          {product.length > 0
+            ? `${product[0].vendor?.shopName || "Shop"}`
+            : "Our Products"}
+        </motion.h2>
 
-      {/* Error fallback in UI */}
-      {error && <div className="text-red-500 mb-4">{error}</div>}
+        {/* Right: Search + Filter */}
+        <div className="flex flex-col sm:flex-row items-center gap-3 w-full md:w-auto">
+          <input
+            type="text"
+            placeholder="🔍 Search by product name..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="w-full sm:w-60 px-4 py-2 border border-blue-200 rounded-xl shadow-sm focus:ring-2 focus:ring-blue-400 focus:outline-none transition-all"
+          />
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 w-300 ">
-        {product.length > 0 ? (
-          product.map((p) => (
-    <div
-    
-  key={p._id}
-  className="relative bg-white border border-gray-200 rounded-3xl shadow-md hover:shadow-xl transition-all duration-500 hover:-translate-y-1 overflow-hidden group"
->
-  {/* Product Image with Hover Buttons */}
-  <div className="relative w-full h-56 overflow-hidden rounded-t-3xl">
-    <img
-      src={p.image?.url}
-      alt={p.productName}
-      className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
-    />
+          <select
+            value={selectedCategory}
+            onChange={(e) => setSelectedCategory(e.target.value)}
+            className="w-full sm:w-48 px-4 py-2 border border-blue-200 rounded-xl shadow-sm bg-white text-gray-700 focus:ring-2 focus:ring-blue-400 focus:outline-none transition-all"
+          >
+            {categories.map((cat, index) => (
+              <option key={index} value={cat}>
+                {cat.charAt(0).toUpperCase() + cat.slice(1)}
+              </option>
+            ))}
+          </select>
+        </div>
+      </div>
 
-    {/* Category Badge */}
-    <span className="absolute top-3 right-3 bg-blue-600 text-white text-xs font-medium px-3 py-1 rounded-full shadow-lg">
-      {p.category}
-    </span>
+      {/* Error */}
+      {error && <div className="text-red-500 text-center mb-4">{error}</div>}
 
-    {/* ✅ Hover Buttons Over Image */}
-    <div className="absolute inset-0 flex items-center justify-center gap-4 bg-black/40 opacity-0 group-hover:opacity-100 transition-all duration-300">
-      <NavLink
-        to={`/updateProduct/${p._id}`}
-        className="bg-white text-blue-700 hover:bg-blue-600 hover:text-white px-4 py-2 rounded-full text-sm font-semibold shadow"
+      {/* ✅ Product Cards */}
+      <motion.div
+        variants={containerVariants}
+        initial="hidden"
+        animate="show"
+        className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8"
       >
-        Update
-      </NavLink>
-      <button
-        onClick={() => deleteProduct(p._id)}
-        className="bg-white text-red-700 hover:bg-red-600 hover:text-white px-4 py-2 rounded-full text-sm font-semibold shadow"
-      >
-        Delete
-      </button>
-    </div>
-  </div>
+        {filteredProducts.length > 0 ? (
+          filteredProducts.map((p) => (
+            <motion.div
+              key={p._id}
+              variants={cardVariants}
+              whileHover={{ scale: 1.04 }}
+              className="relative bg-white/90 backdrop-blur-sm border border-blue-100 rounded-3xl shadow-md hover:shadow-2xl transition-all duration-500 hover:-translate-y-1 overflow-hidden group"
+            >
+              {/* Product Image */}
+              <div className="relative w-full h-56 overflow-hidden rounded-t-3xl">
+                <img
+                  src={p.image?.url}
+                  alt={p.productName}
+                  className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                />
+                <span className="absolute top-3 right-3 bg-blue-600 text-white text-xs font-semibold px-3 py-1 rounded-full shadow-md">
+                  {p.category}
+                </span>
 
-  {/* ✅ Product Details Always Visible */}
-  <div className="p-5">
-    <h3 className="text-lg font-semibold text-gray-800">{p.productName}</h3>
-    <p className="text-sm text-gray-500 mt-1 line-clamp-2">{p.title}</p>
-    <div className="flex justify-between items-center mt-4">
-      <span className="text-xl font-bold text-emerald-600">${p.price}</span>
-      <span className="text-xs font-semibold bg-yellow-100 text-yellow-700 px-3 py-1 rounded-full">
-        In Stock: {p.count}
-      </span>
-    </div>
-  </div>
-</div>
+                {/* Hover Buttons */}
+                <div className="absolute inset-0 flex items-center justify-center gap-3 bg-black/40 opacity-0 group-hover:opacity-100 transition-all duration-300">
+                  <NavLink
+                    to={`/updateProduct/${p._id}`}
+                    className="bg-white text-blue-700 hover:bg-blue-600 hover:text-white px-4 py-2 rounded-full text-sm font-semibold shadow"
+                  >
+                    Update
+                  </NavLink>
+                  <button
+                    onClick={() => deleteProduct(p._id)}
+                    className="bg-white text-red-700 hover:bg-red-600 hover:text-white px-4 py-2 rounded-full text-sm font-semibold shadow"
+                  >
+                    Delete
+                  </button>
+                </div>
+              </div>
 
-
+              {/* Product Details */}
+              <div className="p-5">
+                <h3 className="text-lg font-bold text-blue-900">
+                  {p.productName}
+                </h3>
+                <p className="text-sm text-gray-500 mt-1 line-clamp-2">
+                  {p.title}
+                </p>
+                <div className="flex justify-between items-center mt-4">
+                  <span className="text-xl font-bold text-emerald-600">
+                    ${p.price}
+                  </span>
+                  <span className="text-xs font-semibold bg-yellow-100 text-yellow-700 px-3 py-1 rounded-full">
+                    In Stock: {p.count}
+                  </span>
+                </div>
+              </div>
+            </motion.div>
           ))
         ) : (
-          <p className="col-span-full text-center text-gray-500">
-            No products found.
-          </p>
+          <motion.p
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.7 }}
+            className="col-span-full text-center text-gray-500 text-lg"
+          >
+            No matching products found.
+          </motion.p>
         )}
-      </div>
+      </motion.div>
     </div>
   );
 }
