@@ -95,103 +95,115 @@ function CreateProduct() {
 
         {/* Input Fields */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {[
-            {
-              label: "Product Name",
-              name: "productName",
-              placeholder: "Enter product name",
-              icon: <Package className="w-5 h-5 text-blue-600" />,
-              type: "text",
-            },
-            {
-              label: "Title",
-              name: "title",
-              placeholder: "Enter product title",
-              icon: <Tag className="w-5 h-5 text-blue-600" />,
-              type: "text",
-            },
-            {
-              label: "Price",
-              name: "price",
-              placeholder: "Enter price",
-              icon: <DollarSign className="w-5 h-5 text-blue-600" />,
-              type: "number",
-            },
-            {
-              label: "Category",
-              name: "category",
-              placeholder: "Enter category",
-              icon: <Layers className="w-5 h-5 text-blue-600" />,
-              type: "text",
-            },
-            {
-              label: "Stock Count",
-              name: "count",
-              placeholder: "Enter stock count",
-              icon: <Hash className="w-5 h-5 text-blue-600" />,
-              type: "number",
-            },
-          ].map((input, index) => (
-            <motion.div
-              key={index}
-              variants={fadeUp}
-              transition={{ duration: 0.4, delay: index * 0.1 }}
-              whileHover={{ scale: 1.02 }}
-              className="flex flex-col gap-2"
-            >
-              <label className="font-semibold text-gray-700">
-                {input.label}
-              </label>
-              <div className="flex items-center border border-gray-300 px-3 py-2.5 rounded-xl shadow-sm focus-within:ring-2 focus-within:ring-blue-400 transition-all bg-white">
-                {input.icon}
-                <input
-                  type={input.type}
-                  name={input.name}
-                  placeholder={input.placeholder}
-                  value={formData[input.name]}
-                  onChange={getFormData}
-                  className="w-full pl-2 text-gray-800 outline-none bg-transparent"
-                />
-              </div>
-            </motion.div>
-          ))}
+  {[
+    {
+      label: "Product Name",
+      name: "productName",
+      placeholder: "Enter product name",
+      icon: <Package className="w-5 h-5 text-blue-600" />,
+      type: "text",
+    },
+    {
+      label: "Title",
+      name: "title",
+      placeholder: "Enter product title",
+      icon: <Tag className="w-5 h-5 text-blue-600" />,
+      type: "text",
+    },
+    {
+      label: "Price",
+      name: "price",
+      placeholder: "Enter price",
+      icon: <DollarSign className="w-5 h-5 text-blue-600" />,
+      type: "number",
+    },
+    {
+      label: "Category",
+      name: "category",
+      placeholder: "Enter category",
+      icon: <Layers className="w-5 h-5 text-blue-600" />,
+      type: "text",
+    },
+  ].map((input, index) => (
+    <motion.div
+      key={index}
+      variants={fadeUp}
+      transition={{ duration: 0.4, delay: index * 0.1 }}
+      whileHover={{ scale: 1.02 }}
+      className="flex flex-col gap-2"
+    >
+      <label className="font-semibold text-gray-700">{input.label}</label>
+      <div className="flex items-center border border-gray-300 px-3 py-2.5 rounded-xl shadow-sm focus-within:ring-2 focus-within:ring-blue-400 transition-all bg-white">
+        {input.icon}
+        <input
+          type={input.type}
+          name={input.name}
+          placeholder={input.placeholder}
+          value={formData[input.name]}
+          onChange={getFormData}
+          className="w-full pl-2 text-gray-800 outline-none bg-transparent"
+        />
+      </div>
+    </motion.div>
+  ))}
 
-          {/* Image Upload */}
-          <motion.div
-            variants={fadeUp}
-            whileHover={{ scale: 1.02 }}
-            className="flex flex-col gap-2 md:col-span-2"
-          >
-            <label className="font-semibold text-gray-700">Product Image</label>
-            <div className="flex justify-between items-center border border-gray-300 px-4 py-2.5 rounded-xl bg-white shadow-sm">
-              <span className="text-gray-700 flex items-center gap-2">
-                <FolderUp className="text-blue-600" />
-                {formData.image ? (
-                  <span className="font-medium text-gray-800">
-                    {formData.image.name}
-                  </span>
-                ) : (
-                  "No file selected"
-                )}
-              </span>
-              <div>
-                <input
-                  type="file"
-                  name="image"
-                  onChange={getFormData}
-                  id="productImage"
-                  className="hidden"
-                />
-                <label
-                  htmlFor="productImage"
-                  className="bg-blue-600 text-white px-4 py-2 rounded-lg cursor-pointer hover:bg-blue-700 transition"
-                >
-                  Choose
-                </label>
-              </div>
-            </div>
-          </motion.div>
-        </div>
+  {/* Stock Count */}
+  <motion.div
+    variants={fadeUp}
+    whileHover={{ scale: 1.02 }}
+    className="flex flex-col gap-2"
+  >
+    <label className="font-semibold text-gray-700">Stock Count</label>
+    <div className="flex items-center border border-gray-300 px-3 py-2.5 rounded-xl shadow-sm bg-white focus-within:ring-2 focus-within:ring-blue-400 transition">
+      <Hash className="w-5 h-5 text-blue-600" />
+      <input
+        type="number"
+        name="count"
+        placeholder="Enter stock count"
+        value={formData.count}
+        onChange={getFormData}
+        className="w-full pl-2 text-gray-800 outline-none bg-transparent"
+      />
+    </div>
+  </motion.div>
+
+  {/* Product Image */}
+  <motion.div
+    variants={fadeUp}
+    whileHover={{ scale: 1.02 }}
+    className="flex flex-col gap-2"
+  >
+    <label className="font-semibold text-gray-700">Product Image</label>
+    <div className="flex justify-between items-center border border-gray-300 px-4 py-2.5 rounded-xl bg-white shadow-sm">
+      <span className="text-gray-700 flex items-center gap-2">
+        <FolderUp className="text-blue-600" />
+        {formData.image ? (
+          <span className="font-medium text-gray-800">
+            {formData.image.name}
+          </span>
+        ) : (
+          "No file selected"
+        )}
+      </span>
+      <div>
+        <input
+          type="file"
+          name="image"
+          onChange={getFormData}
+          id="productImage"
+          className="hidden"
+        />
+        <label
+          htmlFor="productImage"
+          className="bg-blue-600 text-white px-4 py-2 rounded-lg cursor-pointer hover:bg-blue-700 transition"
+        >
+          Choose
+        </label>
+      </div>
+    </div>
+  </motion.div>
+</div>
+
 
         {/* Submit Button */}
         <motion.button
