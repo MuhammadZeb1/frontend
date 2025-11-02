@@ -4,6 +4,12 @@ import Slider from "react-slick";
 import { useDispatch, useSelector } from "react-redux";
 import { getProducts } from "../features/GetProductsSlice";
 import { motion } from "framer-motion";
+import {
+  Truck,
+  CreditCard,
+  Headphones,
+  Star,
+} from "lucide-react"; // ✅ Lucide Icons
 import logo from "../assets/web-logo.png";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
@@ -23,7 +29,6 @@ const fadeIn = {
 function Home() {
   const dispatch = useDispatch();
   const { products } = useSelector((state) => state.allProducts);
-  console.log(products, "all products from home");
 
   useEffect(() => {
     dispatch(getProducts());
@@ -44,6 +49,34 @@ function Home() {
       { breakpoint: 600, settings: { slidesToShow: 1 } },
     ],
   };
+
+  // ✅ Info Cards Data (Lucide Icons used instead of emojis)
+  const infoCards = [
+    {
+      title: "Fast Delivery",
+      desc: "Quick and reliable delivery at your doorstep.",
+      icon: <Truck size={40} strokeWidth={2.5} />,
+      color: "from-blue-400 to-blue-600",
+    },
+    {
+      title: "Secure Payment",
+      desc: "Your transactions are 100% safe and encrypted.",
+      icon: <CreditCard size={40} strokeWidth={2.5} />,
+      color: "from-green-400 to-green-600",
+    },
+    {
+      title: "24/7 Support",
+      desc: "We are here to help you anytime, anywhere.",
+      icon: <Headphones size={40} strokeWidth={2.5} />,
+      color: "from-purple-400 to-purple-600",
+    },
+    {
+      title: "Quality Products",
+      desc: "Only the best products from trusted vendors.",
+      icon: <Star size={40} strokeWidth={2.5} />,
+      color: "from-yellow-400 to-yellow-600",
+    },
+  ];
 
   return (
     <motion.div
@@ -69,7 +102,6 @@ function Home() {
             />
             <h1 className="text-2xl font-bold text-blue-800">MyEcommerce</h1>
           </div>
-          
         </motion.header>
 
         {/* Hero Section */}
@@ -88,38 +120,47 @@ function Home() {
             Buy and sell products with ease — your marketplace in one place!
           </p>
 
+          {/* Register Buttons */}
           <motion.div
-            className="flex flex-wrap justify-center gap-4"
+            className="flex flex-wrap justify-center gap-4 mb-8"
             variants={fadeIn}
             transition={{ delay: 0.3, duration: 0.6 }}
           >
-            <motion.div whileHover={{ scale: 1.05 }}>
-              <Link
-                to="/register?role=customer"
-                className="px-6 py-3 border border-blue-800 bg-blue-200 text-blue-900 font-semibold rounded-lg shadow hover:bg-blue-300 transition"
-              >
-                Become a Customer
-              </Link>
-            </motion.div>
-
-            <motion.div whileHover={{ scale: 1.05 }}>
-              <Link
-                to="/register?role=vendor"
-                className="px-6 py-3 border border-blue-800 bg-blue-200 text-blue-900 font-semibold rounded-lg shadow hover:bg-blue-300 transition"
-              >
-                Become a Vendor
-              </Link>
-            </motion.div>
-
-            <motion.div whileHover={{ scale: 1.05 }}>
-              <Link
-                to="/register?role=delivery"
-                className="px-6 py-3 border border-blue-800 bg-blue-200 text-blue-900 font-semibold rounded-lg shadow hover:bg-blue-300 transition"
-              >
-                Become a Delivery
-              </Link>
-            </motion.div>
+            {[
+              { label: "Become a Customer", role: "customer" },
+              { label: "Become a Vendor", role: "vendor" },
+              { label: "Become a Delivery", role: "delivery" },
+            ].map((btn, index) => (
+              <motion.div whileHover={{ scale: 1.05 }} key={index}>
+                <Link
+                  to={`/register?role=${btn.role}`}
+                  className="px-6 py-3 border border-blue-800 bg-blue-200 text-blue-900 font-semibold rounded-lg shadow hover:bg-blue-300 transition"
+                >
+                  {btn.label}
+                </Link>
+              </motion.div>
+            ))}
           </motion.div>
+
+          {/* Info Cards Section */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 px-6 md:px-12 mt-10">
+            {infoCards.map((card, index) => (
+              <motion.div
+                key={index}
+                whileHover={{ scale: 1.08, y: -5 }}
+                initial={{ opacity: 0, y: 50 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: index * 0.2 }}
+                className={`bg-gradient-to-r ${card.color} text-white rounded-2xl shadow-lg p-6 hover:shadow-2xl transition-all`}
+              >
+                <div className="mb-3 flex justify-center">{card.icon}</div>
+                <h3 className="text-xl font-semibold mb-2 text-center">
+                  {card.title}
+                </h3>
+                <p className="text-sm text-center">{card.desc}</p>
+              </motion.div>
+            ))}
+          </div>
         </motion.section>
 
         {/* Products Slider */}
