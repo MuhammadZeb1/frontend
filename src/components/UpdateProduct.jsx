@@ -19,29 +19,28 @@ function UpdateProduct() {
     count: "",
   });
 
-  // Fetch old product data
+  // Fetch existing product data
   useEffect(() => {
     const fetchProduct = async () => {
       try {
         const res = await axiosInstance.get(`/product/products/${id}`);
         const product = res.data.product;
         setFormData({
-          productName: product.productName,
-          title: product.title,
-          price: product.price,
-          category: product.category,
-          count: product.count,
-          image: null, // Keep null first, only update if new image is selected
+          productName: product.productName || "",
+          title: product.title || "",
+          price: product.price || "",
+          category: product.category || "",
+          count: product.count || "",
+          image: null,
         });
       } catch (error) {
         toast.error("Failed to load product data!");
       }
     };
-
     fetchProduct();
   }, [id]);
 
-  // Handle inputs
+  // Handle form inputs
   const getFormData = (e) => {
     const { name, value, files } = e.target;
     setFormData((prev) => ({
@@ -50,7 +49,7 @@ function UpdateProduct() {
     }));
   };
 
-  // Submit update
+  // Submit updated product
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsLoading(true);
@@ -76,77 +75,159 @@ function UpdateProduct() {
     }
   };
 
+  // Animation variants
+  const fadeUp = {
+    hidden: { opacity: 0, y: 30 },
+    visible: { opacity: 1, y: 0 },
+  };
+
   return (
-    <div className="flex justify-center items-center min-h-screen bg-gradient-to-r from-blue-200 to-purple-100 px-4 py-8">
+    <motion.div
+      initial="hidden"
+      animate="visible"
+      variants={fadeUp}
+      transition={{ staggerChildren: 0.2 }}
+      className="flex justify-center items-center min-h-screen bg-gradient-to-br from-blue-100 via-white to-blue-200 px-6 py-10"
+    >
       <motion.form
         onSubmit={handleSubmit}
         encType="multipart/form-data"
-        className="bg-white rounded-2xl shadow-lg p-6 w-full max-w-3xl"
-        initial={{ opacity: 0, y: -40 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6 }}
+        className="bg-white/90 backdrop-blur-sm border border-blue-100 rounded-3xl shadow-2xl p-8 w-full max-w-3xl"
+        initial={{ opacity: 0, scale: 0.95 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ duration: 0.8, ease: "easeOut" }}
       >
-        <div className="flex justify-center mb-6">
-          <h1 className="text-3xl font-extrabold text-gray-900">Update Product</h1>
-        </div>
+        {/* Header */}
+        <motion.div
+          className="text-center mb-8"
+          initial={{ opacity: 0, y: -30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8 }}
+        >
+          <h1 className="text-4xl font-extrabold text-blue-800 tracking-tight drop-shadow-sm">
+            Update Product
+          </h1>
+          <p className="text-gray-600 mt-2">
+            Edit the product details below to update your listing.
+          </p>
+        </motion.div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {/* Product Name */}
-          <InputField icon={<Package />} name="productName" value={formData.productName} onChange={getFormData} placeholder="Enter product name" />
+        {/* Input Fields */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <InputField
+            label="Product Name"
+            icon={<Package className="text-blue-600" />}
+            name="productName"
+            value={formData.productName}
+            onChange={getFormData}
+            placeholder="Enter product name"
+          />
+          <InputField
+            label="Title"
+            icon={<Tag className="text-blue-600" />}
+            name="title"
+            value={formData.title}
+            onChange={getFormData}
+            placeholder="Enter title"
+          />
+          <InputField
+            label="Price"
+            type="number"
+            icon={<DollarSign className="text-blue-600" />}
+            name="price"
+            value={formData.price}
+            onChange={getFormData}
+            placeholder="Enter price"
+          />
+          <InputField
+            label="Category"
+            icon={<Layers className="text-blue-600" />}
+            name="category"
+            value={formData.category}
+            onChange={getFormData}
+            placeholder="Enter category"
+          />
 
-          {/* Title */}
-          <InputField icon={<Tag />} name="title" value={formData.title} onChange={getFormData} placeholder="Enter title" />
-
-          {/* Price */}
-          <InputField icon={<DollarSign />} type="number" name="price" value={formData.price} onChange={getFormData} placeholder="Enter price" />
-
-          {/* Category */}
-          <InputField icon={<Layers />} name="category" value={formData.category} onChange={getFormData} placeholder="Enter category" />
-
-          {/* Stock Count */}
-          <InputField icon={<Hash />} type="number" name="count" value={formData.count} onChange={getFormData} placeholder="Enter stock" />
+          {/* Stock Count & Image side by side */}
+          <InputField
+            label="Stock Count"
+            type="number"
+            icon={<Hash className="text-blue-600" />}
+            name="count"
+            value={formData.count}
+            onChange={getFormData}
+            placeholder="Enter stock count"
+          />
 
           {/* Image Upload */}
-          <motion.div className="flex flex-col gap-1" whileHover={{ scale: 1.02 }}>
-            <label className="font-medium">Product Image (optional)</label>
-            <div className="flex justify-between items-center border border-gray-300 px-3 py-2 rounded-lg">
-              <span className="text-gray-600 flex items-center gap-2">
-                <FolderUp /> {formData.image ? formData.image.name : "Upload image"}
+          <motion.div
+            variants={fadeUp}
+            whileHover={{ scale: 1.02 }}
+            className="flex flex-col gap-2"
+          >
+            <label className="font-semibold text-gray-700">Product Image (optional)</label>
+            <div className="flex justify-between items-center border border-gray-300 px-4 py-2.5 rounded-xl bg-white shadow-sm">
+              <span className="text-gray-700 flex items-center gap-2">
+                <FolderUp className="text-blue-600" />
+                {formData.image ? (
+                  <span className="font-medium text-gray-800">
+                    {formData.image.name}
+                  </span>
+                ) : (
+                  "No file selected"
+                )}
               </span>
-              <input type="file" name="image" onChange={getFormData} id="productImage" className="hidden" />
-              <label htmlFor="productImage" className="bg-blue-500 text-white px-3 py-1 rounded-lg cursor-pointer">
-                Choose
-              </label>
+              <div>
+                <input
+                  type="file"
+                  name="image"
+                  onChange={getFormData}
+                  id="productImage"
+                  className="hidden"
+                />
+                <label
+                  htmlFor="productImage"
+                  className="bg-blue-600 text-white px-4 py-2 rounded-lg cursor-pointer hover:bg-blue-700 transition"
+                >
+                  Choose
+                </label>
+              </div>
             </div>
           </motion.div>
         </div>
 
+        {/* Submit Button */}
         <motion.button
           type="submit"
           disabled={isLoading}
-          className="mt-6 w-full bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700 transition"
           whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
+          className={`mt-8 w-full py-3 rounded-xl text-white font-semibold shadow-lg transition-all ${
+            isLoading
+              ? "bg-blue-400 cursor-not-allowed"
+              : "bg-blue-600 hover:bg-blue-700"
+          }`}
         >
-          {isLoading ? "Updating..." : "Update Product"}
+          {isLoading ? "Updating Product..." : "Update Product"}
         </motion.button>
       </motion.form>
-    </div>
+    </motion.div>
   );
 }
 
-// Reusable input component
-const InputField = ({ icon, name, value, onChange, placeholder, type = "text" }) => (
-  <motion.div className="flex flex-col gap-1" whileHover={{ scale: 1.02 }}>
-    <label className="font-medium capitalize">{name}</label>
-    <div className="flex items-center border border-gray-300 px-3 py-2 rounded-lg">
-      <div className="w-5 h-5 mr-2 text-gray-500">{icon}</div>
+// Reusable input field
+const InputField = ({ label, icon, name, value, onChange, placeholder, type = "text" }) => (
+  <motion.div whileHover={{ scale: 1.02 }} className="flex flex-col gap-2">
+    <label className="font-semibold text-gray-700">{label}</label>
+    <div className="flex items-center border border-gray-300 px-3 py-2.5 rounded-xl shadow-sm focus-within:ring-2 focus-within:ring-blue-400 transition-all bg-white">
+      {icon}
       <input
         type={type}
         name={name}
+        placeholder={placeholder}
         value={value}
         onChange={onChange}
-        placeholder={placeholder}
-        className="w-full outline-none"
+        className="w-full pl-2 text-gray-800 outline-none bg-transparent"
       />
     </div>
   </motion.div>
