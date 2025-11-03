@@ -2,6 +2,9 @@ import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { getPurchase } from "../features/purchaseSlice";
 import axiosInstance from "../utils/axiosInstance";
+import { motion } from "framer-motion";
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 function PurchasePage() {
   const dispatch = useDispatch();
@@ -9,92 +12,149 @@ function PurchasePage() {
     (state) => state.purchase
   );
 
-  console.log("Purchase data from Redux:", purchase);
+  console.log("purchase ", purchase);
 
-  // Fetch purchases on mount
   useEffect(() => {
     dispatch(getPurchase());
   }, [dispatch]);
 
-  // ✅ Remove a purchase
+  useEffect(() => {
+    if (error) toast.error(error);
+    if (message) toast.success(message);
+  }, [error, message]);
+
   const handleRemove = async (purchaseId) => {
     try {
       await axiosInstance.delete(`/purchase/purchase/${purchaseId}`);
-      dispatch(getPurchase()); // Refresh purchases after delete
+      dispatch(getPurchase());
+      toast.success("Purchase removed!");
     } catch (err) {
+      toast.error("Error deleting purchase");
       console.error("Error deleting purchase:", err);
     }
   };
 
-  // Calculate grand total
   const grandTotal = purchase.reduce((total, item) => {
     const subtotal =
       Number(item.productId?.price || 0) * Number(item.quantity || 0);
     return total + subtotal;
   }, 0);
 
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    show: { opacity: 1, transition: { staggerChildren: 0.15 } },
+  };
+
+  const cardVariants = {
+    hidden: { opacity: 0, y: 50 },
+    show: { opacity: 1, y: 0, transition: { duration: 0.6, ease: "easeOut" } },
+  };
+
   return (
-    <div className="p-6 blue-300">
-      <div className="flex justify-between mb-4">
-        <h2 className="text-2xl font-bold">🛍️ Your Purchases</h2>
-        {message && <p className="text-green-600 font-semibold">{message}</p>}
-      </div>
+    <section className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-blue-100 px-6 py-10">
+      {/* Header with customer name and grand total on the same line */}
+<div className="flex justify-between items-center mb-10">
+  <motion.h2
+    className="text-3xl md:text-4xl font-extrabold text-blue-800 drop-shadow-sm"
+    initial={{ opacity: 0, y: -20 }}
+    animate={{ opacity: 1, y: 0 }}
+    transition={{ duration: 0.8 }}
+  >
+    {purchase && purchase.length > 0
+      ? `${purchase[0].customerId?.name}'s Purchases`
+      : "Your Purchases"}
+  </motion.h2>
 
-      {isLoading ? (
-        <p className="text-gray-500">Loading purchases...</p>
-      ) : error ? (
-        <p className="text-red-500">{error}</p>
-      ) : purchase.length === 0 ? (
-        <p className="text-gray-500">You have no purchases yet.</p>
-      ) : (
-        <>
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-            {purchase.map((item) => {
-              const subtotal =
-                Number(item.productId?.price || 0) *
-                Number(item.quantity || 0);
+  {purchase.length > 0 && (
+    <motion.h3
+      className="text-xl font-bold text-blue-700"
+      initial={{ opacity: 0, y: -20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.8 }}
+    >
+      Grand Total: ${grandTotal}
+    </motion.h3>
+  )}
+</div>
 
-              return (
-                <div
-                  key={item._id}
-                  className="bg-white shadow rounded-2xl p-4 hover:shadow-lg transition flex flex-col"
-                >
+
+      {isLoading && (
+        <p className="text-center text-blue-700 text-lg">
+          Loading purchases...
+        </p>
+      )}
+
+      <motion.div
+        variants={containerVariants}
+        initial="hidden"
+        animate="show"
+        className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6"
+      >
+        {purchase && purchase.length > 0 ? (
+          purchase.map((item) => {
+            const subtotal =
+              Number(item.productId?.price || 0) * Number(item.quantity || 0);
+
+            return (
+              <motion.div
+                key={item._id}
+                variants={cardVariants}
+                whileHover={{ scale: 1.02 }}
+                className="bg-white shadow-md rounded-3xl overflow-hidden border border-gray-200 flex flex-col"
+              >
+                {/* Image with hover Remove button */}
+                <div className="relative w-full h-48 overflow-hidden rounded-t-3xl group">
                   <img
-                    src={item.productId.image?.url}
-                    alt={item.productId.productName}
-                    className="w-full h-40 object-cover rounded-lg mb-3"
+                    src={item.productId?.image?.url || "/placeholder.png"}
+                    alt={item.productId?.productName}
+                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
                   />
-                  <h3 className="text-lg font-semibold">
-                    {item.productId.productName}
-                  </h3>
-                  <p className="text-gray-600">Qty: {item.quantity || 1}</p>
-                  <p className="text-gray-600">Vendor: {item.userId?.name}</p>
-                  <p className="text-blue-600 font-bold mt-1">
-                    ${item.productId.price || 0}
-                  </p>
-                  <p className="font-bold text-gray-700 mt-1">
-                    Subtotal: ${subtotal}
-                  </p>
-
-                  {/* Remove Button */}
+                  {/* Remove button on hover */}
                   <button
                     onClick={() => handleRemove(item._id)}
-                    className="mt-3 bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 transition"
+                    className="absolute inset-0 m-auto w-32 h-10 bg-red-500 text-white rounded-lg
+                               opacity-0 group-hover:opacity-100 flex justify-center items-center
+                               transition-opacity duration-300 shadow"
                   >
                     Remove
                   </button>
                 </div>
-              );
-            })}
-          </div>
 
-          {/* Grand Total */}
-          <div className="text-right mt-6">
-            <h3 className="text-xl font-bold">Grand Total: ${grandTotal}</h3>
-          </div>
-        </>
-      )}
-    </div>
+                <div className="p-5 flex-1">
+                  {/* Product info in two columns */}
+                  <div className="grid grid-cols-2 gap-2 text-sm text-gray-700 font-medium">
+                    <span className="text-blue-800 font-bold truncate">
+                      {item.productId?.productName}
+                    </span>
+                    <span>Qty: {item.quantity || 1}</span>
+                    <span>
+                      Vendor: {item.productId?.vendor?.name || "Unknown"}
+                    </span>
+                    <span className="text-blue-600 font-bold">
+                      ${item.productId?.price || 0}
+                    </span>
+                    <span className="font-bold text-gray-700 col-span-2 text-right">
+                      Subtotal: ${subtotal}
+                    </span>
+                  </div>
+                </div>
+              </motion.div>
+            );
+          })
+        ) : (
+          <motion.p
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.7 }}
+            className="col-span-full text-center text-gray-500 text-lg"
+          >
+            No purchases found.
+          </motion.p>
+        )}
+      </motion.div>
+
+      
+    </section>
   );
 }
 
