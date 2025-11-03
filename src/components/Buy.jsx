@@ -1,18 +1,26 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { useStripe, useElements, CardNumberElement, CardExpiryElement, CardCvcElement } from "@stripe/react-stripe-js";
+import {
+  useStripe,
+  useElements,
+  CardNumberElement,
+  CardExpiryElement,
+  CardCvcElement,
+} from "@stripe/react-stripe-js";
 import axiosInstance from "../utils/axiosInstance";
 import { toast } from "react-toastify";
+import { motion } from "framer-motion";
+import { CreditCard, MapPin, Phone } from "lucide-react";
 
 const Buy = () => {
-  const { id } = useParams(); // productId from URL
+  const { id } = useParams();
   const navigate = useNavigate();
   const stripe = useStripe();
   const elements = useElements();
 
   const [amount, setAmount] = useState("");
-  const [address, setAddress] = useState(""); // 🆕 address state
-  const [phone, setPhone] = useState("");     // 🆕 phone state
+  const [address, setAddress] = useState("");
+  const [phone, setPhone] = useState("");
   const [loading, setLoading] = useState(false);
 
   const handleBuy = async (e) => {
@@ -35,13 +43,12 @@ const Buy = () => {
         return;
       }
 
-      // send paymentMethod.id, amount, address, phone to backend
       const res = await axiosInstance.post("/purchase/purchase", {
         productId: id,
         paymentMethodId: paymentMethod.id,
         amount: Number(amount),
-        address,   // 🆕 add
-        phone,     // 🆕 add
+        address,
+        phone,
       });
 
       toast.success(res.data.message);
@@ -54,80 +61,125 @@ const Buy = () => {
     }
   };
 
+  const fadeUp = {
+    hidden: { opacity: 0, y: 30 },
+    visible: { opacity: 1, y: 0 },
+  };
+
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100">
-      <div className="max-w-md w-full p-6 border rounded shadow bg-white">
-        <h1 className="text-xl font-bold mb-6 text-center">Buy Product</h1>
+    <motion.div
+      initial="hidden"
+      animate="visible"
+      variants={fadeUp}
+      className="flex justify-center items-center min-h-screen mt-0 bg-gradient-to-br
+       from-blue-100 via-white to-blue-200 px-9 py-10"
+    >
+      <motion.form
+        onSubmit={handleBuy}
+        className="bg-white/90 backdrop-blur-sm border border-blue-100 rounded-3xl shadow-2xl p-8 w-full max-w-md"
+        initial={{ opacity: 0, scale: 0.95 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ duration: 0.8, ease: "easeOut" }}
+      >
+        {/* Header */}
+        <motion.div
+          className="text-center mb-8"
+          initial={{ opacity: 0, y: -30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8 }}
+        >
+          <h1 className="text-3xl font-bold text-blue-800 drop-shadow-sm">
+            Buy Product
+          </h1>
+          <p className="text-gray-600 mt-2">
+            Enter your card details and delivery info.
+          </p>
+        </motion.div>
 
-        <form onSubmit={handleBuy} className="space-y-4">
-          {/* Card Number */}
-          <div>
-            <label className="block mb-1 font-medium">Card Number</label>
-            <CardNumberElement className="w-full h-10 border rounded p-2" options={{ placeholder: "1234 1234 1234 1234" }} />
+        {/* Card Number */}
+        <motion.div
+          variants={fadeUp}
+          whileHover={{ scale: 1.02 }}
+          className="flex flex-col gap-2 mb-4"
+        >
+          <label className="font-semibold text-gray-700">Card Number</label>
+          <div className="flex items-center border border-gray-300 px-3 py-2.5 rounded-xl shadow-sm focus-within:ring-2 focus-within:ring-blue-400 transition-all bg-white">
+            <CreditCard className="w-5 h-5 text-blue-600" />
+            <CardNumberElement className="w-full pl-2 text-gray-800 outline-none bg-transparent" />
           </div>
+        </motion.div>
 
-          {/* Expiry and CVC */}
-          <div className="flex gap-2">
-            <div className="flex-1">
-              <label className="block mb-1 font-medium">Expiry Date</label>
-              <CardExpiryElement className="w-full p-2 border rounded" />
-            </div>
-            <div className="flex-1">
-              <label className="block mb-1 font-medium">CVC</label>
-              <CardCvcElement className="w-full p-2 border rounded" />
-            </div>
-          </div>
+        {/* Expiry + CVC */}
+        <div className="flex gap-2 mb-4">
+          <motion.div variants={fadeUp} whileHover={{ scale: 1.02 }} className="flex-1 flex flex-col gap-2">
+            <label className="font-semibold text-gray-700">Expiry Date</label>
+            <CardExpiryElement className="w-full p-2 border rounded-xl bg-white" />
+          </motion.div>
+          <motion.div variants={fadeUp} whileHover={{ scale: 1.02 }} className="flex-1 flex flex-col gap-2">
+            <label className="font-semibold text-gray-700">CVC</label>
+            <CardCvcElement className="w-full p-2 border rounded-xl bg-white" />
+          </motion.div>
+        </div>
 
-          {/* Amount */}
-          <div>
-            <label className="block mb-1 font-medium">Amount</label>
-            <input
-              type="number"
-              placeholder="Enter amount"
-              value={amount}
-              onChange={(e) => setAmount(e.target.value)}
-              className="w-full border p-2 rounded"
-              required
-            />
-          </div>
+        {/* Amount */}
+        <motion.div variants={fadeUp} whileHover={{ scale: 1.02 }} className="flex flex-col gap-2 mb-4">
+          <label className="font-semibold text-gray-700">Amount</label>
+          <input
+            type="number"
+            placeholder="Enter amount"
+            value={amount}
+            onChange={(e) => setAmount(e.target.value)}
+            className="w-full border px-3 py-2 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
+            required
+          />
+        </motion.div>
 
-          {/* Address 🆕 */}
-          <div>
-            <label className="block mb-1 font-medium">Delivery Address</label>
+        {/* Address */}
+        <motion.div variants={fadeUp} whileHover={{ scale: 1.02 }} className="flex flex-col gap-2 mb-4">
+          <label className="font-semibold text-gray-700">Delivery Address</label>
+          <div className="flex items-center border border-gray-300 px-3 py-2.5 rounded-xl shadow-sm focus-within:ring-2 focus-within:ring-blue-400 transition-all bg-white">
+            <MapPin className="w-5 h-5 text-blue-600" />
             <input
               type="text"
-              placeholder="Enter your address"
+              placeholder="Enter address"
               value={address}
               onChange={(e) => setAddress(e.target.value)}
-              className="w-full border p-2 rounded"
+              className="w-full pl-2 text-gray-800 outline-none bg-transparent"
               required
             />
           </div>
+        </motion.div>
 
-          {/* Phone 🆕 */}
-          <div>
-            <label className="block mb-1 font-medium">Phone Number</label>
+        {/* Phone */}
+        <motion.div variants={fadeUp} whileHover={{ scale: 1.02 }} className="flex flex-col gap-2 mb-6">
+          <label className="font-semibold text-gray-700">Phone Number</label>
+          <div className="flex items-center border border-gray-300 px-3 py-2.5 rounded-xl shadow-sm focus-within:ring-2 focus-within:ring-blue-400 transition-all bg-white">
+            <Phone className="w-5 h-5 text-blue-600" />
             <input
               type="text"
-              placeholder="Enter your phone number"
+              placeholder="Enter phone"
               value={phone}
               onChange={(e) => setPhone(e.target.value)}
-              className="w-full border p-2 rounded"
+              className="w-full pl-2 text-gray-800 outline-none bg-transparent"
               required
             />
           </div>
+        </motion.div>
 
-          {/* Submit Button */}
-          <button
-            type="submit"
-            disabled={loading || !stripe}
-            className="w-full bg-blue-600 text-white py-2 px-4 rounded"
-          >
-            {loading ? "Processing..." : "Pay Now"}
-          </button>
-        </form>
-      </div>
-    </div>
+        {/* Submit */}
+        <motion.button
+          type="submit"
+          disabled={loading || !stripe}
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
+          className={`w-full py-3 rounded-xl text-white font-semibold shadow-lg transition-all ${
+            loading ? "bg-blue-400 cursor-not-allowed" : "bg-blue-600 hover:bg-blue-700"
+          }`}
+        >
+          {loading ? "Processing..." : "Pay Now"}
+        </motion.button>
+      </motion.form>
+    </motion.div>
   );
 };
 

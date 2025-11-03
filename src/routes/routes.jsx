@@ -1,4 +1,7 @@
 // routes/routes.js
+import { Elements } from "@stripe/react-stripe-js";
+import { loadStripe } from "@stripe/stripe-js";
+
 import ApproveDelivery from "../components/ApproveDelivery";
 import Buy from "../components/Buy";
 import CartPage from "../components/CartPage";
@@ -6,7 +9,6 @@ import CreateProduct from "../components/CreateProduct";
 import Deshborad from "../components/Deshborad";
 import GetAllDelivery from "../components/GetAllDelivery";
 import GetDeliveryAssign from "../components/GetDeliveryAssign";
-// import GetProductOfVendor from "../components/GetProductOfVendor";
 import GetPurchaseOfVendor from "../components/GetPurchaseOfVendor";
 import GetVendorAssign from "../components/GetVendorAssign";
 import GiveDelivery from "../components/GiveDelivery";
@@ -18,31 +20,8 @@ import Register from "../components/Register";
 import UpdateProduct from "../components/UpdateProduct";
 import VendorProduct from "../components/VendorProduct";
 
-// Public routes (always visible)
-// export const publicRoutes = [
-//   { path: "/", element: <Home /> },
-//   { path: "/login", element: <Login /> },
-//   { path: "/register", element: <Register /> },
-// ];
-
-// Protected routes (require login)
-// export const privateRoutes = [
-//   { path: "/createProduct", role:"vendor", element: <CreateProduct /> },
-//   { path: "/updateProduct/:id",role:"vendor", element: <UpdateProduct /> },
-//   { path: "/readProduct", role:"vendor",element: <ReadProduct /> },
-//   // costomer
-//   { path: "/deshboard",role:"customer", element: <Deshborad /> },
-//   { path: "/vendorProduct/:id",role:"customer", element: <VendorProduct /> },
-//   { path: "/cartPage",role:"customer", element: <CartPage /> },
-//   { path: "/buy/:id",role:"customer", element: <Buy /> },
-//   { path: "/purchases",role:"customer", element: <PurchasePage /> },
-//   { path: "/GetVendorPurchases",role:"vendor", element: <GetPurchaseOfVendor /> },
-//   { path: "/getAllDelivery",role:"vendor", element: <GetAllDelivery /> },
-//   { path: "/GetDelivery",role:"vendor", element: <ApproveDelivery /> },
-//   { path: "/giveDelivery/:id",role:"vendor", element: <GiveDelivery /> },
-//   { path: "/getVendorAssignDelivery",role:"vendor", element: <GetVendorAssign /> },
-//   { path: "/getDeliveryAssign",role:"delivery", element: <GetDeliveryAssign /> },
-// ];
+// ✅ Initialize Stripe
+const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_KEY);
 
 export const publicRoutes = [
   { path: "/", element: <Home /> },
@@ -54,7 +33,14 @@ export const customerRoutes = [
   { path: "/deshboard", element: <Deshborad /> },
   { path: "/vendorProduct/:id", element: <VendorProduct /> },
   { path: "/cartPage", element: <CartPage /> },
-  { path: "/buy/:id", element: <Buy /> },
+  {
+    path: "/buy/:id",
+    element: (
+      <Elements stripe={stripePromise}>
+        <Buy />
+      </Elements>
+    ),
+  },
   { path: "/purchases", element: <PurchasePage /> },
 ];
 
@@ -72,4 +58,3 @@ export const vendorRoutes = [
 export const deliveryRoutes = [
   { path: "/getDeliveryAssign", element: <GetDeliveryAssign /> },
 ];
-
