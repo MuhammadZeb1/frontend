@@ -25,7 +25,8 @@ function PurchasePage() {
 
   const handleRemove = async (purchaseId) => {
     try {
-      await axiosInstance.delete(`/purchase/purchase/${purchaseId}`);
+      await axiosInstance.delete(`/purchase/customer/${purchaseId}`);
+      console.log("jhjhhh")
       dispatch(getPurchase());
       toast.success("Purchase removed!");
     } catch (err) {

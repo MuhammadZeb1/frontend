@@ -6,6 +6,7 @@ import { useNavigate } from "react-router-dom";
 import { Check, Trash2 } from "lucide-react";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import axiosInstance from "@/utils/axiosInstance";
 
 function GetPurchaseOfVendor() {
   const dispatch = useDispatch();
@@ -58,26 +59,18 @@ function GetPurchaseOfVendor() {
   };
 
   // ✅ Handle Remove Purchase
-  const handleRemove = async (id) => {
-    try {
-      const res = await fetch(`/api/purchase/${id}`, {
-        method: "DELETE",
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
-      });
+  // For vendor delete
+const handleRemove = async (id) => {
+  try {
+    const res = await axiosInstance.delete(`/purchase/purchase/${id}`);
+    toast.success(res.data.message);
+    dispatch(getVendorPurchase());
+  } catch (err) {
+    console.error("Something went wrong while deleting", err);
+    toast.error("Something went wrong while deleting");
+  }
+};
 
-      const data = await res.json();
-      if (res.ok) {
-        toast.success("Purchase removed successfully!");
-        dispatch(getVendorPurchase());
-      } else {
-        toast.error(data.message || "Failed to remove purchase");
-      }
-    } catch (err) {
-      toast.error("Something went wrong while deleting");
-    }
-  };
 
   return (
     <motion.section
@@ -119,8 +112,9 @@ function GetPurchaseOfVendor() {
         variants={containerVariants}
         initial="hidden"
         animate="show"
-        className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 w-[80%] l"
+        className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 w-[80%] "
       >
+        
         <AnimatePresence>
           {purchase && purchase.length > 0 ? (
             purchase.map((item) => {

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import {
   useStripe,
@@ -18,10 +18,50 @@ const Buy = () => {
   const stripe = useStripe();
   const elements = useElements();
 
-  const [amount, setAmount] = useState("");
   const [address, setAddress] = useState("");
   const [phone, setPhone] = useState("");
   const [loading, setLoading] = useState(false);
+  const [productPrice, setProductPrice] = useState(0);
+
+  // Fetch product price automatically
+  // useEffect(() => {
+  //   const fetchProduct = async () => {
+  //     try {
+  //       const res = await axiosInstance.get(`/product/products/${id}`);
+  //       setProductPrice(res.data.product.price);
+  //       console.log("Fetched product price:", res.data.product.price);
+        
+
+  //     } catch (err) {
+  //       toast.error("Failed to fetch product price");
+  //     }
+  //   };
+  //   fetchProduct();
+  // }, [id]);
+  useEffect(() => {
+  const fetchCartProduct = async () => {
+    try {
+      const res = await axiosInstance.get("/carts/getCarts");
+      const item = res.data.cartItems.find((i) => i.productId._id === id);
+
+      if (!item) {
+        toast.error("Product not found in cart");
+        return;
+      }
+
+      setProductPrice(item.productId.price * item.quantity); // subtotal
+      setAddress(item.address); // optional
+      console.log("Cart subtotal:", item.productId.price * item.quantity);
+    } catch (err) {
+      toast.error("Failed to fetch product from cart");
+      console.error(err);
+    }
+  };
+  fetchCartProduct();
+}, [id]);
+
+
+  console.log(productPrice)
 
   const handleBuy = async (e) => {
     e.preventDefault();
@@ -46,7 +86,7 @@ const Buy = () => {
       const res = await axiosInstance.post("/purchase/purchase", {
         productId: id,
         paymentMethodId: paymentMethod.id,
-        amount: Number(amount),
+        amount: productPrice, // ✅ Auto price
         address,
         phone,
       });
@@ -94,6 +134,9 @@ const Buy = () => {
           <p className="text-gray-600 mt-2">
             Enter your card details and delivery info.
           </p>
+          <p className="text-gray-700 mt-2 font-medium">
+            Amount: ${productPrice} {/* ✅ Display auto price */}
+          </p>
         </motion.div>
 
         {/* Card Number */}
@@ -120,19 +163,6 @@ const Buy = () => {
             <CardCvcElement className="w-full p-2 border rounded-xl bg-white" />
           </motion.div>
         </div>
-
-        {/* Amount */}
-        <motion.div variants={fadeUp} whileHover={{ scale: 1.02 }} className="flex flex-col gap-2 mb-4">
-          <label className="font-semibold text-gray-700">Amount</label>
-          <input
-            type="number"
-            placeholder="Enter amount"
-            value={amount}
-            onChange={(e) => setAmount(e.target.value)}
-            className="w-full border px-3 py-2 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
-            required
-          />
-        </motion.div>
 
         {/* Address */}
         <motion.div variants={fadeUp} whileHover={{ scale: 1.02 }} className="flex flex-col gap-2 mb-4">
