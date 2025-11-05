@@ -29,74 +29,54 @@ function Navbar() {
   const linkClasses =
     "text-white transition-colors duration-300 hover:text-yellow-300 hover:underline underline-offset-4";
 
-  // 🔥 Button hover animation using Framer Motion
   const MotionButton = motion(Button);
 
   const renderLinks = () => {
+    // 🔹 Guest User Links
     if (!token) {
       return (
         <>
-          <MotionButton
-            asChild
-            variant="link"
-            whileHover={{ scale: 1.1 }}
-            whileTap={{ scale: 0.95 }}
-          >
-            <NavLink to="/" className={linkClasses}>
-              Home
-            </NavLink>
+          <MotionButton asChild variant="link" whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.95 }}>
+            <NavLink to="/" className={linkClasses}>Home</NavLink>
           </MotionButton>
 
-          <MotionButton
-            asChild
-            variant="link"
-            whileHover={{ scale: 1.1 }}
-            whileTap={{ scale: 0.95 }}
-          >
-            <NavLink to="/login" className={linkClasses}>
-              Login
-            </NavLink>
+          <MotionButton asChild variant="link" whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.95 }}>
+            <NavLink to="/login" className={linkClasses}>Login</NavLink>
           </MotionButton>
 
-          <MotionButton
-            asChild
-            variant="link"
-            whileHover={{ scale: 1.1 }}
-            whileTap={{ scale: 0.95 }}
-          >
-            <NavLink to="/register" className={linkClasses}>
-              Register
-            </NavLink>
+          <MotionButton asChild variant="link" whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.95 }}>
+            <NavLink to="/register" className={linkClasses}>Register</NavLink>
           </MotionButton>
         </>
       );
     }
 
+    // 🔹 Vendor Links
     if (role === "vendor") {
       return (
         <>
           <MotionButton asChild variant="link" whileHover={{ y: -3 }}>
-            <NavLink to="/createProduct" className={linkClasses}>
-              Create Product
-            </NavLink>
+            <NavLink to="/" className={linkClasses}>Home</NavLink>
           </MotionButton>
 
           <MotionButton asChild variant="link" whileHover={{ y: -3 }}>
-            <NavLink to="/readProduct" className={linkClasses}>
-              My Products
-            </NavLink>
+            <NavLink to="/createProduct" className={linkClasses}>Create Product</NavLink>
           </MotionButton>
 
           <MotionButton asChild variant="link" whileHover={{ y: -3 }}>
-            <NavLink to="/GetVendorPurchases" className={linkClasses}>
-              Purchases
-            </NavLink>
+            <NavLink to="/readProduct" className={linkClasses}>My Products</NavLink>
           </MotionButton>
 
           <MotionButton asChild variant="link" whileHover={{ y: -3 }}>
-            <NavLink to="/getAllDelivery" className={linkClasses}>
-              Delivery
-            </NavLink>
+            <NavLink to="/GetVendorPurchases" className={linkClasses}>Purchases</NavLink>
+          </MotionButton>
+
+          <MotionButton asChild variant="link" whileHover={{ y: -3 }}>
+            <NavLink to="/getAllDelivery" className={linkClasses}>Delivery</NavLink>
+          </MotionButton>
+
+          <MotionButton asChild variant="link" whileHover={{ y: -3 }}>
+            <NavLink to="/getVendorAssignDelivery" className={linkClasses}>Assigned Delivery</NavLink>
           </MotionButton>
 
           <MotionButton
@@ -112,24 +92,26 @@ function Navbar() {
       );
     }
 
+    // 🔹 Customer Links
     if (role === "customer") {
       return (
         <>
           <MotionButton asChild variant="link" whileHover={{ y: -3 }}>
-            <NavLink to="/deshboard" className={linkClasses}>
-              Dashboard
-            </NavLink>
+            <NavLink to="/" className={linkClasses}>Home</NavLink>
           </MotionButton>
+
           <MotionButton asChild variant="link" whileHover={{ y: -3 }}>
-            <NavLink to="/cartPage" className={linkClasses}>
-              Cart
-            </NavLink>
+            <NavLink to="/deshboard" className={linkClasses}>Dashboard</NavLink>
           </MotionButton>
+
           <MotionButton asChild variant="link" whileHover={{ y: -3 }}>
-            <NavLink to="/purchases" className={linkClasses}>
-              Purchases
-            </NavLink>
+            <NavLink to="/cartPage" className={linkClasses}>Cart</NavLink>
           </MotionButton>
+
+          <MotionButton asChild variant="link" whileHover={{ y: -3 }}>
+            <NavLink to="/purchases" className={linkClasses}>Purchases</NavLink>
+          </MotionButton>
+
           <MotionButton
             variant="destructive"
             onClick={handleLogout}
@@ -143,14 +125,18 @@ function Navbar() {
       );
     }
 
+    // 🔹 Delivery Links
     if (role === "delivery") {
       return (
         <>
           <MotionButton asChild variant="link" whileHover={{ y: -3 }}>
-            <NavLink to="/getDeliveryAssign" className={linkClasses}>
-              Assigned Deliveries
-            </NavLink>
+            <NavLink to="/" className={linkClasses}>Home</NavLink>
           </MotionButton>
+
+          <MotionButton asChild variant="link" whileHover={{ y: -3 }}>
+            <NavLink to="/getDeliveryAssign" className={linkClasses}>Assigned Deliveries</NavLink>
+          </MotionButton>
+
           <MotionButton
             variant="destructive"
             onClick={handleLogout}

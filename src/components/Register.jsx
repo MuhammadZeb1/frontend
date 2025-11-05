@@ -71,7 +71,7 @@ function Register() {
   };
 
   return (
-    <div className="flex justify-center items-center h-min-screen bg-transparent overflow-hidden mt-5 px-4 ">
+    <div className="flex justify-center items-center h-min-screen bg-gradient-to-br from-blue-100 via-white to-blue-200 overflow-hidden mt-5 px-4 ">
       <motion.form
         onSubmit={handleSubmit}
         encType="multipart/form-data"

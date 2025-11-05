@@ -9,6 +9,7 @@ import getVendorPurchaseReducer from "../features/GetVendorPurchaseSlice.jsx";
 import getAllDeliveryReducer from "../features/GetAllDeliverySlice.jsx";
 import getApproveDeliveryReducer from "../features/GetApproveDeliverySlice.jsx";
 import getVendorDeliveriesReducer from "../features/getVendorAssignSlice.jsx";
+import deliveryBoyDeliveriesReducer from "../features/getDeliveryBoyDeliveriesSlice.jsx";
 
 export const store = configureStore({
   reducer: {
@@ -22,6 +23,7 @@ export const store = configureStore({
     allDelivery: getAllDeliveryReducer,
     delivery: getApproveDeliveryReducer,
     vendorDeliveries: getVendorDeliveriesReducer,
+    deliveryBoyDeliveries: deliveryBoyDeliveriesReducer,
   },
 });
 

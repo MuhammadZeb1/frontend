@@ -15,7 +15,6 @@ function ReadProduct() {
   const dispatch = useDispatch();
 
   const [searchTerm, setSearchTerm] = useState("");
-  const [selectedCategory, setSelectedCategory] = useState("All");
 
   useEffect(() => {
     dispatch(getProduct());
@@ -45,24 +44,10 @@ function ReadProduct() {
     );
   }
 
-  // ✅ Fixed categories
-  const categories = [
-    "All",
-    "grocery",
-    "electronics",
-    "clothing",
-    "pharmacy",
-    "other",
-  ];
-
-  const filteredProducts = product.filter((p) => {
-    const matchesSearch = p.productName
-      ?.toLowerCase()
-      .includes(searchTerm.toLowerCase());
-    const matchesCategory =
-      selectedCategory === "All" || p.category === selectedCategory;
-    return matchesSearch && matchesCategory;
-  });
+  // ✅ Search filter only
+  const filteredProducts = product.filter((p) =>
+    p.productName?.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -76,65 +61,48 @@ function ReadProduct() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-100 via-white to-blue-200 px-6 py-10">
-      {/* ✅ Header Row with Title + Search/Filter */}
-<motion.div
-  initial={{ opacity: 0, y: -20 }}
-  animate={{ opacity: 1, y: 0 }}
-  transition={{ duration: 0.8, ease: "easeOut" }}
-  className="flex flex-col md:flex-row justify-between items-center gap-4 mb-10 max-w-6xl mx-auto"
->
-  {/* Left: Title */}
-  <motion.h2
-    initial={{ opacity: 0, x: -20 }}
-    animate={{ opacity: 1, x: 0 }}
-    transition={{ duration: 0.8 }}
-    className="text-3xl md:text-4xl font-extrabold text-blue-800 drop-shadow-sm text-center md:text-left"
-  >
-    {product.length > 0
-      ? `${product[0].vendor?.shopName || "Shop"}`
-      : "Our Products"}
-  </motion.h2>
+      {/* ✅ Header Row with Title + Search */} 
+      <motion.div
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.8, ease: "easeOut" }}
+        className="flex flex-col md:flex-row justify-between items-center gap-4 mb-10 max-w-6xl mx-auto"
+      >
+        {/* Left: Title */}
+        <motion.h2
+          initial={{ opacity: 0, x: -20 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.8 }}
+          className="text-3xl md:text-4xl font-extrabold text-blue-800 drop-shadow-sm text-center md:text-left"
+        >
+          {product.length > 0
+            ? `${product[0].vendor?.shopName || "Shop"}`
+            : "Our Products"}
+        </motion.h2>
 
-  {/* ✅ Right: Search + Filter (Animated Group) */}
-  <motion.div
-    initial={{ opacity: 0, x: 20 }}
-    animate={{ opacity: 1, x: 0 }}
-    transition={{ duration: 0.8, delay: 0.2 }}
-    className="flex flex-col sm:flex-row items-center gap-3 w-full md:w-auto"
-  >
-    {/* ✅ Search Bar */}
-    <motion.div
-      whileHover={{ scale: 1.02 }}
-      transition={{ type: "spring", stiffness: 200 }}
-      className="relative w-full sm:w-80 md:w-96"
-    >
-      <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-blue-500 w-5 h-5" />
-      <input
-        type="text"
-        placeholder="Search products..."
-        value={searchTerm}
-        onChange={(e) => setSearchTerm(e.target.value)}
-        className="w-full pl-10 pr-4 py-2 border border-blue-200 rounded-xl shadow-sm focus:ring-2 focus:ring-blue-400 focus:outline-none transition-all text-gray-700 placeholder:text-gray-400"
-      />
-    </motion.div>
-
-    {/* ✅ Category Filter */}
-    <motion.select
-      whileHover={{ scale: 1.02 }}
-      transition={{ type: "spring", stiffness: 200 }}
-      value={selectedCategory}
-      onChange={(e) => setSelectedCategory(e.target.value)}
-      className="w-full sm:w-48 px-4 py-2 border border-blue-200 rounded-xl shadow-sm bg-white text-gray-700 focus:ring-2 focus:ring-blue-400 focus:outline-none transition-all"
-    >
-      {categories.map((cat, index) => (
-        <option key={index} value={cat}>
-          {cat.charAt(0).toUpperCase() + cat.slice(1)}
-        </option>
-      ))}
-    </motion.select>
-  </motion.div>
-</motion.div>
-
+        {/* ✅ Right: Search Bar Only */}
+        <motion.div
+          initial={{ opacity: 0, x: 20 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.8, delay: 0.2 }}
+          className="flex items-center gap-3 w-full md:w-auto"
+        >
+          <motion.div
+            whileHover={{ scale: 1.02 }}
+            transition={{ type: "spring", stiffness: 200 }}
+            className="relative w-full sm:w-80 md:w-96"
+          >
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-blue-500 w-5 h-5" />
+            <input
+              type="text"
+              placeholder="Search products..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="w-full pl-10 pr-4 py-2 border border-blue-200 rounded-xl shadow-sm focus:ring-2 focus:ring-blue-400 focus:outline-none transition-all text-gray-700 placeholder:text-gray-400"
+            />
+          </motion.div>
+        </motion.div>
+      </motion.div>
 
       {/* Error */}
       {error && <div className="text-red-500 text-center mb-4">{error}</div>}
