@@ -39,6 +39,24 @@ function ApproveDelivery() {
   const filteredDeliveries = deliveries?.filter((d) =>
     d.deliveryId?.name?.toLowerCase().includes(search.toLowerCase())
   );
+  // ✅ Handle delete approved delivery boy
+const handleDelete = async (deliveryBoyId) => {
+  if (!window.confirm("Are you sure you want to delete this delivery boy?")) return;
+
+  try {
+    await axiosInstance.delete(`/allDelivery/approved-delivery/${deliveryBoyId}`);
+    
+    toast.success("✅ Delivery boy removed successfully!");
+    console.log("id", deliveryBoyId);
+
+    // Refresh list after deletion
+    dispatch(getApproveDelivery());
+  } catch (error) {
+    console.error("Error deleting delivery boy:", error);
+    toast.error("❌ Failed to delete delivery boy");
+  }
+};
+
 
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -131,7 +149,7 @@ function ApproveDelivery() {
                     initial={{ opacity: 0 }}
                     whileHover={{ opacity: 1 }}
                     transition={{ duration: 0.4 }}
-                    className="absolute inset-0 bg-black/40 flex justify-center items-center opacity-0 group-hover:opacity-100 transition-opacity duration-500"
+                    className="absolute inset-0 bg-black/40 flex justify-center items-center gap-4 opacity-0 group-hover:opacity-100 transition-opacity duration-500"
                   >
                     <motion.button
                       whileHover={{ scale: 1.1 }}
@@ -140,6 +158,14 @@ function ApproveDelivery() {
                       className="bg-blue-600 text-white px-4 py-2 rounded-lg shadow-md flex items-center gap-2 font-medium"
                     >
                       <CheckCircle className="w-5 h-5" /> Assign Delivery
+                    </motion.button>
+                    <motion.button
+                      whileHover={{ scale: 1.1 }}
+                      whileTap={{ scale: 0.95 }}
+                      onClick={() => handleDelete(d._id)}
+                      className="bg-red-600 text-white px-4 py-2 rounded-lg shadow-md flex items-center gap-2 font-medium"
+                    >
+                      Remove
                     </motion.button>
                   </motion.div>
                 </div>
@@ -152,7 +178,9 @@ function ApproveDelivery() {
                   className="p-5"
                 >
                   <div className="mb-3 flex flex-col sm:flex-row sm:justify-between sm:items-center gap-1">
-                    <h3 className="text-lg font-bold text-blue-900">{d.name}</h3>
+                    <h3 className="text-lg font-bold text-blue-900">
+                      {d.name}
+                    </h3>
                     <p className="text-sm text-gray-600 mt-1 sm:mt-0 break-all">
                       📧 {d.email}
                     </p>

@@ -23,7 +23,6 @@ function GetPurchaseOfVendor() {
     if (error) toast.error(error);
   }, [error]);
 
-  // ✅ Animation Variants
   const pageVariants = {
     hidden: { opacity: 0, y: 50 },
     show: { opacity: 1, y: 0, transition: { duration: 0.6, ease: "easeOut" } },
@@ -39,38 +38,25 @@ function GetPurchaseOfVendor() {
 
   const cardVariants = {
     hidden: { opacity: 0, scale: 0.9, y: 30 },
-    show: {
-      opacity: 1,
-      scale: 1,
-      y: 0,
-      transition: { duration: 0.5, ease: "easeOut" },
-    },
-    exit: {
-      opacity: 0,
-      scale: 0.8,
-      transition: { duration: 0.3 },
-    },
+    show: { opacity: 1, scale: 1, y: 0, transition: { duration: 0.5, ease: "easeOut" } },
+    exit: { opacity: 0, scale: 0.8, transition: { duration: 0.3 } },
   };
 
-  // ✅ Handle Mark as Delivered
   const handleMarkDelivered = (id) => {
     toast.success("Marked as Delivered!");
     navigate(`/giveDelivery/${id}`);
   };
 
-  // ✅ Handle Remove Purchase
-  // For vendor delete
-const handleRemove = async (id) => {
-  try {
-    const res = await axiosInstance.delete(`/purchase/purchase/${id}`);
-    toast.success(res.data.message);
-    dispatch(getVendorPurchase());
-  } catch (err) {
-    console.error("Something went wrong while deleting", err);
-    toast.error("Something went wrong while deleting");
-  }
-};
-
+  const handleRemove = async (id) => {
+    try {
+      const res = await axiosInstance.delete(`/purchase/purchase/${id}`);
+      toast.success(res.data.message);
+      dispatch(getVendorPurchase());
+    } catch (err) {
+      console.error("Something went wrong while deleting", err);
+      toast.error("Something went wrong while deleting");
+    }
+  };
 
   return (
     <motion.section
@@ -80,7 +66,6 @@ const handleRemove = async (id) => {
       animate="show"
       exit="hidden"
     >
-      {/* Animated Title */}
       <motion.h2
         className="text-3xl md:text-4xl font-extrabold text-center mb-10 text-blue-800 drop-shadow-sm"
         initial={{ opacity: 0, y: -30 }}
@@ -88,11 +73,7 @@ const handleRemove = async (id) => {
         transition={{ duration: 0.8 }}
       >
         {purchase && purchase.length > 0
-          ? `${
-              purchase[0].vendorId?.shopName ||
-              purchase[0].vendorId?.name ||
-              "Vendor"
-            } Purchases`
+          ? `${purchase[0].vendorId?.shopName || purchase[0].vendorId?.name || "Vendor"} Purchases`
           : "Vendor Purchases"}
       </motion.h2>
 
@@ -107,33 +88,25 @@ const handleRemove = async (id) => {
         </motion.p>
       )}
 
-      {/* Card Container */}
       <motion.div
         variants={containerVariants}
         initial="hidden"
         animate="show"
-        className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 w-[80%] "
+        className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 w-[80%]"
       >
-        
         <AnimatePresence>
           {purchase && purchase.length > 0 ? (
             purchase.map((item) => {
-              const customerPurchase = item.customerPurchaseId;
-              const product = customerPurchase?.productId;
-              const customer = customerPurchase?.customerId;
+              const product = item.productId;
 
               return (
                 <motion.div
                   key={item._id}
                   variants={cardVariants}
-                  whileHover={{
-                    scale: 1.03,
-                    boxShadow: "0px 10px 25px rgba(0,0,0,0.1)",
-                  }}
+                  whileHover={{ scale: 1.03, boxShadow: "0px 10px 25px rgba(0,0,0,0.1)" }}
                   exit="exit"
                   className="relative bg-white rounded-3xl shadow-md border border-gray-200 overflow-hidden group"
                 >
-                  {/* Product Image + Hover Buttons */}
                   <div className="relative w-full h-48 overflow-hidden rounded-t-3xl">
                     <motion.img
                       src={product?.image?.url || "/placeholder.png"}
@@ -144,12 +117,11 @@ const handleRemove = async (id) => {
                       transition={{ duration: 0.8 }}
                     />
 
-                    {/* Hover Buttons */}
                     <motion.div
                       initial={{ opacity: 0, y: 10 }}
                       whileHover={{ opacity: 1, y: 0 }}
                       transition={{ duration: 0.4 }}
-                      className="absolute inset-0 flex  items-center justify-center gap-3 opacity-0 group-hover:opacity-100 transition-all duration-300"
+                      className="absolute inset-0 flex items-center justify-center gap-3 opacity-0 group-hover:opacity-100 transition-all duration-300"
                     >
                       <motion.button
                         onClick={() => handleMarkDelivered(item._id)}
@@ -160,13 +132,9 @@ const handleRemove = async (id) => {
                         <Check className="w-4 h-4" /> Mark as Delivered
                       </motion.button>
 
-                      {/* Remove Button */}
                       <motion.button
                         onClick={() => handleRemove(item._id)}
-                        whileHover={{
-                          scale: 1.05,
-                          backgroundColor: "#dc2626",
-                        }}
+                        whileHover={{ scale: 1.05, backgroundColor: "#dc2626" }}
                         whileTap={{ scale: 0.95 }}
                         className="w-40 bg-red-600 text-white rounded-lg shadow text-sm h-10 flex justify-center items-center gap-2"
                       >
@@ -174,7 +142,6 @@ const handleRemove = async (id) => {
                       </motion.button>
                     </motion.div>
 
-                    {/* Status Badge */}
                     <motion.span
                       initial={{ opacity: 0, scale: 0.8 }}
                       animate={{ opacity: 1, scale: 1 }}
@@ -189,7 +156,6 @@ const handleRemove = async (id) => {
                     </motion.span>
                   </div>
 
-                  {/* Product Details */}
                   <motion.div
                     className="p-5 flex flex-col gap-2"
                     initial={{ opacity: 0, y: 15 }}
@@ -201,34 +167,24 @@ const handleRemove = async (id) => {
                         {product?.productName}
                       </h3>
                       <span className="text-gray-700 font-medium text-sm">
-                        Qty: {customerPurchase?.quantity}
+                        Qty: {item.quantity}
                       </span>
                     </div>
 
-                    {/* Customer Info */}
                     <div className="grid grid-cols-2 gap-2 bg-blue-50 p-3 rounded-xl shadow-inner text-sm">
-                      <p className="font-medium text-gray-700 truncate">
-                        👤 {customer?.name}
-                      </p>
-                      <p className="text-gray-500 truncate">
-                        📧 {customer?.email}
-                      </p>
-                      <p className="text-gray-700 truncate">
-                        📍 {customerPurchase?.address}
-                      </p>
-                      <p className="text-gray-700 truncate">
-                        📞 {customerPurchase?.phone}
-                      </p>
+                      <p className="font-medium text-gray-700 truncate">👤 {item.customerName}</p>
+                      <p className="text-gray-500 truncate">📧 {item.customerEmail}</p>
+                      <p className="text-gray-700 truncate">📍 {item.customerAddress}</p>
+                      <p className="text-gray-700 truncate">📞 {item.customerPhone}</p>
                     </div>
 
-                    {/* Amount */}
                     <motion.div
                       className="text-gray-700 font-medium text-sm mt-2"
                       initial={{ opacity: 0 }}
                       animate={{ opacity: 1 }}
                       transition={{ delay: 0.2 }}
                     >
-                      Amount: ${customerPurchase?.amount}
+                      Amount: ${item.amount}
                     </motion.div>
                   </motion.div>
                 </motion.div>
