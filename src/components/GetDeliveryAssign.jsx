@@ -62,8 +62,8 @@ function GetDeliveryAssign() {
       >
         {deliveries.map((delivery, index) => {
           const vendor = delivery.vendorId || {};
-          const purchase = delivery.purchaseId?.customerPurchaseId || {};
-          const product = purchase?.productId || {};
+          const purchase = delivery.purchaseId || {};
+          const product = purchase.productId || {};
 
           return (
             <motion.div
@@ -109,7 +109,9 @@ function GetDeliveryAssign() {
                     {purchase?.address || "N/A"}
                   </span>
                 </p>
-                <p className="text-gray-600">📞 Phone: {purchase?.phone || "N/A"}</p>
+                <p className="text-gray-600">
+                  📞 Phone: {purchase?.phone || "N/A"}
+                </p>
 
                 <div className="border-t border-gray-200 pt-2">
                   <p className="text-gray-600">

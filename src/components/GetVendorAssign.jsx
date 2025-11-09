@@ -35,19 +35,23 @@ function GetVendorAssign() {
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
         {deliveries.map((delivery) => {
-          const product = delivery?.purchaseId?.customerPurchaseId?.productId;
-          const customer = delivery?.purchaseId?.customerPurchaseId;
-          const deliveryBoy = delivery?.deliveryBoyId;
+          // ✅ Correct access
+          const product = delivery?.purchaseId?.productId || {};
+          const customer = delivery?.purchaseId?.customerId || {};
+          const deliveryBoy = delivery?.deliveryBoyId || {};
 
           return (
             <div
               key={delivery._id}
-              className="bg-white shadow-lg rounded-2xl border border-gray-100 hover:shadow-2xl transition-all duration-300 overflow-hidden"
+              className="bg-white shadow-md rounded-2xl border border-gray-100 hover:shadow-xl transition-all duration-300 overflow-hidden"
             >
               {/* Product Image */}
               <div className="relative">
                 <img
-                  src={product?.image?.url}
+                  src={
+                    product?.image?.url ||
+                    "https://via.placeholder.com/300x200?text=No+Image"
+                  }
                   alt={product?.title || "Product"}
                   className="w-full h-48 object-cover"
                 />
@@ -60,7 +64,7 @@ function GetVendorAssign() {
                       : "bg-gray-100 text-gray-700"
                   }`}
                 >
-                  {delivery.status || "Pending"}
+                  {delivery.status?.toUpperCase() || "PENDING"}
                 </span>
               </div>
 
@@ -70,33 +74,42 @@ function GetVendorAssign() {
                   {product?.title || "Unknown Product"}
                 </h3>
                 <p className="text-gray-600 font-medium">
-                  💰 Price: Rs. {product?.price}
+                  💰 <span className="font-semibold">Price:</span> Rs.{" "}
+                  {product?.price || "N/A"}
+                </p>
+
+                <div className="border-t border-gray-200 my-2"></div>
+
+                <p className="text-gray-600">
+                  👤 <span className="font-semibold">Delivery Boy:</span>{" "}
+                  {deliveryBoy?.name || "Not Assigned"}
                 </p>
                 <p className="text-gray-600">
-                  👤 Delivery Boy:{" "}
-                  <span className="font-semibold text-blue-700">
-                    {deliveryBoy?.name || "N/A"}
-                  </span>
+                  📧 {deliveryBoy?.email || "No email available"}
                 </p>
-                <p className="text-gray-600">📧 {deliveryBoy?.email || "No email"}</p>
+
+                <div className="border-t border-gray-200 my-2"></div>
+
                 <p className="text-gray-600 truncate">
-                  🏠 Address:{" "}
-                  <span className="font-semibold">
-                    {customer?.address || "No address"}
-                  </span>
+                  🏠 <span className="font-semibold">Address:</span>{" "}
+                  {customer?.address || "No address provided"}
                 </p>
-                <p className="text-gray-600">📞 {customer?.phone || "No phone"}</p>
+                <p className="text-gray-600">
+                  📞 {customer?.phone || "No phone number"}
+                </p>
 
                 <div className="flex justify-between items-center pt-3">
                   <p className="text-xs text-gray-500">
                     🕒{" "}
-                    {new Date(delivery.assignedAt).toLocaleString("en-GB", {
-                      day: "2-digit",
-                      month: "short",
-                      year: "numeric",
-                      hour: "2-digit",
-                      minute: "2-digit",
-                    })}
+                    {delivery.assignedAt
+                      ? new Date(delivery.assignedAt).toLocaleString("en-GB", {
+                          day: "2-digit",
+                          month: "short",
+                          year: "numeric",
+                          hour: "2-digit",
+                          minute: "2-digit",
+                        })
+                      : "No date"}
                   </p>
                   <button className="px-3 py-1 bg-blue-600 text-white rounded-lg text-xs hover:bg-blue-700 transition">
                     View Details

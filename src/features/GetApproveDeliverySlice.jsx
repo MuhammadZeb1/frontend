@@ -32,6 +32,8 @@ const getApproveDeliverySlice = createSlice({
       })
       .addCase(getApproveDelivery.fulfilled, (state, action) => {
         state.isLoading = false;
+        console.log("Approved deliveries from API:", action.payload);
+
         state.deliveries = action.payload;
 
         console.log("State Deliveries:", state.deliveries);
@@ -39,7 +41,7 @@ const getApproveDeliverySlice = createSlice({
       .addCase(getApproveDelivery.rejected, (state, action) => {
         state.isLoading = false;
         state.error = action.payload;
-        F;
+        
       });
   },
 });
