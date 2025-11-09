@@ -1,8 +1,9 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { getDeliveryBoyDeliveries } from "../features/getDeliveryBoyDeliveriesSlice.jsx";
 import { motion } from "framer-motion";
 import { ToastContainer, toast } from "react-toastify";
+import axiosInstance from "../utils/axiosInstance.js";
 import "react-toastify/dist/ReactToastify.css";
 
 function GetDeliveryAssign() {
@@ -11,55 +12,54 @@ function GetDeliveryAssign() {
     (state) => state.deliveryBoyDeliveries
   );
 
+  const [updatingStatusId, setUpdatingStatusId] = useState(null);
+
   useEffect(() => {
     dispatch(getDeliveryBoyDeliveries())
       .unwrap()
       .then(() =>
-        toast.success("Deliveries loaded successfully 🚚", {
-          position: "top-right",
-          autoClose: 2000,
-        })
+        toast.success("Deliveries loaded successfully 🚚", { position: "top-right", autoClose: 2000 })
       )
       .catch(() =>
-        toast.error("Failed to load deliveries ❌", {
-          position: "top-right",
-          autoClose: 2500,
-        })
+        toast.error("Failed to load deliveries ❌", { position: "top-right", autoClose: 2500 })
       );
   }, [dispatch]);
 
-  if (isLoading)
-    return (
-      <p className="text-center text-gray-500 mt-10 animate-pulse">
-        Loading deliveries...
-      </p>
-    );
+  // ✅ Update delivery status dynamically
+  const updateStatus = async (purchaseId, status) => {
+    try {
+      setUpdatingStatusId(purchaseId);
+      const response = await axiosInstance.patch("/deliveryAssignment/delivery/status", { purchaseId, status });
+      toast.success(response.data.message);
+      dispatch(getDeliveryBoyDeliveries());
+    } catch (err) {
+      toast.error(err.response?.data?.message || "Failed to update status");
+    } finally {
+      setUpdatingStatusId(null);
+    }
+  };
 
-  if (error)
-    return (
-      <p className="text-center text-red-500 mt-10 animate-bounce">
-        Error: {error}
-      </p>
-    );
+  // ✅ Delete delivery
+  const deleteDelivery = async (purchaseId) => {
+    try {
+      const response = await axiosInstance.delete(`/deliveryAssignment/delivery/${purchaseId}`);
+      toast.success(response.data.message);
+      dispatch(getDeliveryBoyDeliveries());
+    } catch (err) {
+      toast.error(err.response?.data?.message || "Failed to delete delivery");
+    }
+  };
 
-  if (!deliveries || deliveries.length === 0)
-    return (
-      <p className="text-center text-gray-500 mt-10">
-        No deliveries assigned yet.
-      </p>
-    );
+  if (isLoading) return <p className="text-center text-gray-500 mt-10 animate-pulse">Loading deliveries...</p>;
+  if (error) return <p className="text-center text-red-500 mt-10 animate-bounce">Error: {error}</p>;
+  if (!deliveries || deliveries.length === 0) return <p className="text-center text-gray-500 mt-10">No deliveries assigned yet.</p>;
 
   return (
     <div className="p-6">
       <ToastContainer />
-      <h2 className="text-2xl font-bold text-blue-900 mb-6 text-center">
-        🚚 My Assigned Deliveries
-      </h2>
+      <h2 className="text-2xl font-bold text-blue-900 mb-6 text-center">🚚 My Assigned Deliveries</h2>
 
-      <motion.div
-        layout
-        className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"
-      >
+      <motion.div layout className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
         {deliveries.map((delivery, index) => {
           const vendor = delivery.vendorId || {};
           const purchase = delivery.purchaseId || {};
@@ -96,33 +96,18 @@ function GetDeliveryAssign() {
 
               {/* Card Content */}
               <div className="p-4 text-sm text-gray-700 space-y-2">
-                <h3 className="text-lg font-bold text-blue-800 truncate">
-                  {product?.title || "Unknown Product"}
-                </h3>
-
-                <p className="text-gray-600 font-medium">
-                  💰 Price: Rs. {product?.price}
-                </p>
+                <h3 className="text-lg font-bold text-blue-800 truncate">{product?.title || "Unknown Product"}</h3>
+                <p className="text-gray-600 font-medium">💰 Price: Rs. {product?.price}</p>
                 <p className="text-gray-600">
-                  🏠 Address:{" "}
-                  <span className="font-semibold">
-                    {purchase?.address || "N/A"}
-                  </span>
+                  🏠 Address: <span className="font-semibold">{purchase?.address || "N/A"}</span>
                 </p>
-                <p className="text-gray-600">
-                  📞 Phone: {purchase?.phone || "N/A"}
-                </p>
+                <p className="text-gray-600">📞 Phone: {purchase?.phone || "N/A"}</p>
 
                 <div className="border-t border-gray-200 pt-2">
                   <p className="text-gray-600">
-                    🧾 Vendor:{" "}
-                    <span className="font-semibold text-blue-700">
-                      {vendor?.shopName || "Unknown Vendor"}
-                    </span>
+                    🧾 Vendor: <span className="font-semibold text-blue-700">{vendor?.shopName || "Unknown Vendor"}</span>
                   </p>
-                  <p className="text-gray-600 truncate">
-                    📧 {vendor?.email || "No email"}
-                  </p>
+                  <p className="text-gray-600 truncate">📧 {vendor?.email || "No email"}</p>
                 </div>
 
                 <div className="flex justify-between items-center pt-3">
@@ -136,18 +121,27 @@ function GetDeliveryAssign() {
                       minute: "2-digit",
                     })}
                   </p>
-                  <motion.button
-                    whileTap={{ scale: 0.95 }}
-                    onClick={() =>
-                      toast.info("Details coming soon! 📦", {
-                        position: "bottom-right",
-                        autoClose: 2000,
-                      })
-                    }
-                    className="px-3 py-1 bg-blue-600 text-white rounded-lg text-xs hover:bg-blue-700 transition"
-                  >
-                    View Details
-                  </motion.button>
+
+                  {/* ✅ Status Dropdown & Delete */}
+                  <div className="flex space-x-2 items-center">
+                    <select
+                      value={delivery.status}
+                      onChange={(e) => updateStatus(delivery.purchaseId._id, e.target.value)}
+                      disabled={updatingStatusId === delivery.purchaseId._id}
+                      className="px-2 py-1 text-xs border rounded"
+                    >
+                      <option value="pending">Pending</option>
+                      <option value="in-progress">In-Progress</option>
+                      <option value="completed">Completed</option>
+                    </select>
+
+                    <button
+                      onClick={() => deleteDelivery(delivery.purchaseId._id)}
+                      className="px-2 py-1 bg-red-500 text-white rounded text-xs hover:bg-red-600"
+                    >
+                      Delete
+                    </button>
+                  </div>
                 </div>
               </div>
             </motion.div>

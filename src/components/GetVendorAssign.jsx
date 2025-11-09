@@ -1,6 +1,9 @@
 import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { getVendorDeliveries } from "../features/getVendorAssignSlice.jsx";
+import axiosInstance from "../utils/axiosInstance.js";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 function GetVendorAssign() {
   const dispatch = useDispatch();
@@ -12,13 +15,26 @@ function GetVendorAssign() {
     dispatch(getVendorDeliveries());
   }, [dispatch]);
 
+  const handleDelete = async (purchaseId) => {
+    try {
+      await axiosInstance.delete(`/deliveryAssignment/delivery/${purchaseId}`);
+      toast.success("Delivery deleted successfully 🗑️", {
+        position: "top-right",
+        autoClose: 2000,
+      });
+      dispatch(getVendorDeliveries()); // Refresh list
+    } catch (err) {
+      toast.error(err.response?.data?.message || "Failed to delete delivery ❌", {
+        position: "top-right",
+      });
+    }
+  };
+
   if (isLoading)
     return <p className="text-center text-gray-500 mt-10">Loading...</p>;
 
   if (error)
-    return (
-      <p className="text-center text-red-500 mt-10">Error: {error}</p>
-    );
+    return <p className="text-center text-red-500 mt-10">Error: {error}</p>;
 
   if (!deliveries || deliveries.length === 0)
     return (
@@ -29,13 +45,13 @@ function GetVendorAssign() {
 
   return (
     <div className="p-6">
+      <ToastContainer />
       <h2 className="text-2xl font-bold text-blue-900 mb-6 text-center">
         🚚 Vendor Assigned Deliveries
       </h2>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
         {deliveries.map((delivery) => {
-          // ✅ Correct access
           const product = delivery?.purchaseId?.productId || {};
           const customer = delivery?.purchaseId?.customerId || {};
           const deliveryBoy = delivery?.deliveryBoyId || {};
@@ -111,9 +127,17 @@ function GetVendorAssign() {
                         })
                       : "No date"}
                   </p>
-                  <button className="px-3 py-1 bg-blue-600 text-white rounded-lg text-xs hover:bg-blue-700 transition">
-                    View Details
-                  </button>
+                  <div className="flex space-x-2">
+                    <button className="px-3 py-1 bg-blue-600 text-white rounded-lg text-xs hover:bg-blue-700 transition">
+                      View Details
+                    </button>
+                    <button
+                      onClick={() => handleDelete(delivery.purchaseId._id)}
+                      className="px-3 py-1 bg-red-600 text-white rounded-lg text-xs hover:bg-red-700 transition"
+                    >
+                      Delete
+                    </button>
+                  </div>
                 </div>
               </div>
             </div>
