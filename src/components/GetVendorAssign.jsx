@@ -156,7 +156,7 @@ function GetVendorAssign() {
       </div>
 
       {/* ✅ Global reusable confirm dialog */}
-      {ConfirmDialog}
+      {<ConfirmDialog/>}
     </div>
   );
 }
