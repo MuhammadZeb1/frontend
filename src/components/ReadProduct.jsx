@@ -6,22 +6,29 @@ import axiosInstance from "../utils/axiosInstance";
 import { NavLink } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Search } from "lucide-react";
-import { useConfirmDialog } from "@/components/common/useConfirmDialog"; // ✅ Import hook
+import { useConfirmDialog } from "../components/common/useConfirmDialog"; // ✅ Make sure the path is correct
 
 function ReadProduct() {
+  const dispatch = useDispatch();
   const { product, isLoading, error, message } = useSelector(
     (state) => state.product
   );
 
-  const dispatch = useDispatch();
   const [searchTerm, setSearchTerm] = useState("");
-  const { ConfirmDialog, confirm } = useConfirmDialog(); // ✅ Use hook
+  const { ConfirmDialog, confirm } = useConfirmDialog(); // ✅ Hook usage
 
+  // Fetch products
   useEffect(() => {
     dispatch(getProduct());
   }, [dispatch]);
 
-  // ✅ Wrapped delete with confirm dialog
+  // Toast errors and messages
+  useEffect(() => {
+    if (error) toast.error(error);
+    if (message) toast.success(message);
+  }, [error, message]);
+
+  // Delete product with confirmation
   const deleteProduct = async (id) => {
     const ok = await confirm(
       "Delete Product",
@@ -35,18 +42,10 @@ function ReadProduct() {
       const res = await axiosInstance.delete(`/product/products/${id}`);
       toast.success(res.data.message);
       dispatch(getProduct());
-    } catch (error) {
-      toast.error(error.response?.data?.message || "Delete failed");
+    } catch (err) {
+      toast.error(err.response?.data?.message || "Delete failed");
     }
   };
-
-  useEffect(() => {
-    if (error) toast.error(error);
-  }, [error]);
-
-  useEffect(() => {
-    if (message) toast.success(message);
-  }, [message]);
 
   if (isLoading) {
     return (
@@ -70,7 +69,7 @@ function ReadProduct() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-100 via-white to-blue-200 px-6 py-10">
-      {/* ✅ Header Row */}
+      {/* Header */}
       <motion.div
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -129,7 +128,7 @@ function ReadProduct() {
             >
               <div className="relative w-full h-56 overflow-hidden rounded-t-3xl">
                 <img
-                  src={p.image?.url}
+                  src={p.image?.url || "/placeholder.png"}
                   alt={p.productName}
                   className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
                 />
@@ -157,9 +156,7 @@ function ReadProduct() {
                 <h3 className="text-lg font-bold text-blue-900">
                   {p.productName}
                 </h3>
-                <p className="text-sm text-gray-500 mt-1 line-clamp-2">
-                  {p.title}
-                </p>
+                <p className="text-sm text-gray-500 mt-1 line-clamp-2">{p.title}</p>
                 <div className="flex justify-between items-center mt-4">
                   <span className="text-xl font-bold text-emerald-600">
                     ${p.price}
@@ -183,8 +180,8 @@ function ReadProduct() {
         )}
       </motion.div>
 
-      {/* ✅ Reusable confirmation dialog */}
-      {ConfirmDialog}
+      {/* ✅ Render Confirm Dialog */}
+      <ConfirmDialog />
     </div>
   );
 }

@@ -5,6 +5,7 @@ import { motion } from "framer-motion";
 import { ToastContainer, toast } from "react-toastify";
 import axiosInstance from "../utils/axiosInstance.js";
 import "react-toastify/dist/ReactToastify.css";
+import { useConfirmDialog } from "./common/useConfirmDialog.jsx"; // ✅ Import hook
 
 function GetDeliveryAssign() {
   const dispatch = useDispatch();
@@ -13,6 +14,9 @@ function GetDeliveryAssign() {
   );
 
   const [updatingStatusId, setUpdatingStatusId] = useState(null);
+
+  // ✅ Initialize confirm dialog hook
+  const { ConfirmDialog, confirm } = useConfirmDialog();
 
   useEffect(() => {
     dispatch(getDeliveryBoyDeliveries())
@@ -39,8 +43,16 @@ function GetDeliveryAssign() {
     }
   };
 
-  // ✅ Delete delivery
-  const deleteDelivery = async (purchaseId) => {
+  // ✅ Delete delivery using confirm dialog
+  const handleDelete = async (purchaseId) => {
+    const ok = await confirm(
+      "Delete Delivery",
+      "Are you sure you want to delete this delivery? This action cannot be undone.",
+      "Delete",
+      "Cancel"
+    );
+    if (!ok) return;
+
     try {
       const response = await axiosInstance.delete(`/deliveryAssignment/delivery/${purchaseId}`);
       toast.success(response.data.message);
@@ -74,10 +86,9 @@ function GetDeliveryAssign() {
               whileHover={{ scale: 1.03 }}
               className="bg-white shadow-lg rounded-2xl border border-gray-100 hover:shadow-2xl transition-all duration-300 overflow-hidden"
             >
-              {/* Product Image */}
               <div className="relative">
                 <img
-                  src={product?.image?.url}
+                  src={product?.image?.url || "/placeholder.png"}
                   alt={product?.title || "Product"}
                   className="w-full h-48 object-cover"
                 />
@@ -94,19 +105,14 @@ function GetDeliveryAssign() {
                 </span>
               </div>
 
-              {/* Card Content */}
               <div className="p-4 text-sm text-gray-700 space-y-2">
                 <h3 className="text-lg font-bold text-blue-800 truncate">{product?.title || "Unknown Product"}</h3>
                 <p className="text-gray-600 font-medium">💰 Price: Rs. {product?.price}</p>
-                <p className="text-gray-600">
-                  🏠 Address: <span className="font-semibold">{purchase?.address || "N/A"}</span>
-                </p>
+                <p className="text-gray-600">🏠 Address: <span className="font-semibold">{purchase?.address || "N/A"}</span></p>
                 <p className="text-gray-600">📞 Phone: {purchase?.phone || "N/A"}</p>
 
                 <div className="border-t border-gray-200 pt-2">
-                  <p className="text-gray-600">
-                    🧾 Vendor: <span className="font-semibold text-blue-700">{vendor?.shopName || "Unknown Vendor"}</span>
-                  </p>
+                  <p className="text-gray-600">🧾 Vendor: <span className="font-semibold text-blue-700">{vendor?.shopName || "Unknown Vendor"}</span></p>
                   <p className="text-gray-600 truncate">📧 {vendor?.email || "No email"}</p>
                 </div>
 
@@ -122,7 +128,6 @@ function GetDeliveryAssign() {
                     })}
                   </p>
 
-                  {/* ✅ Status Dropdown & Delete */}
                   <div className="flex space-x-2 items-center">
                     <select
                       value={delivery.status}
@@ -136,7 +141,7 @@ function GetDeliveryAssign() {
                     </select>
 
                     <button
-                      onClick={() => deleteDelivery(delivery.purchaseId._id)}
+                      onClick={() => handleDelete(delivery.purchaseId._id)}
                       className="px-2 py-1 bg-red-500 text-white rounded text-xs hover:bg-red-600"
                     >
                       Delete
@@ -148,10 +153,11 @@ function GetDeliveryAssign() {
           );
         })}
       </motion.div>
+
+      {/* ✅ Render confirm dialog */}
+      <ConfirmDialog />
     </div>
   );
 }
 
-
 export default GetDeliveryAssign;
-

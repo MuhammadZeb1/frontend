@@ -5,6 +5,7 @@ import axiosInstance from "../utils/axiosInstance";
 import { motion } from "framer-motion";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { useConfirmDialog } from "../components/common/useConfirmDialog"; // ✅ Import hook
 
 function PurchasePage() {
   const dispatch = useDispatch();
@@ -12,7 +13,7 @@ function PurchasePage() {
     (state) => state.purchase
   );
 
-  console.log("purchase ", purchase);
+  const { ConfirmDialog, confirm } = useConfirmDialog(); // ✅ Initialize hook
 
   useEffect(() => {
     dispatch(getPurchase());
@@ -24,9 +25,16 @@ function PurchasePage() {
   }, [error, message]);
 
   const handleRemove = async (purchaseId) => {
+    const ok = await confirm(
+      "Remove Purchase",
+      "Are you sure you want to remove this purchase?",
+      "Remove",
+      "Cancel"
+    );
+    if (!ok) return;
+
     try {
       await axiosInstance.delete(`/purchase/customer/${purchaseId}`);
-      console.log("jhjhhh")
       dispatch(getPurchase());
       toast.success("Purchase removed!");
     } catch (err) {
@@ -53,31 +61,30 @@ function PurchasePage() {
 
   return (
     <section className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-blue-100 px-6 py-10">
-      {/* Header with customer name and grand total on the same line */}
-<div className="flex justify-between items-center mb-10">
-  <motion.h2
-    className="text-3xl md:text-4xl font-extrabold text-blue-800 drop-shadow-sm"
-    initial={{ opacity: 0, y: -20 }}
-    animate={{ opacity: 1, y: 0 }}
-    transition={{ duration: 0.8 }}
-  >
-    {purchase && purchase.length > 0
-      ? `${purchase[0].customerId?.name}'s Purchases`
-      : "Your Purchases"}
-  </motion.h2>
+      {/* Header */}
+      <div className="flex justify-between items-center mb-10">
+        <motion.h2
+          className="text-3xl md:text-4xl font-extrabold text-blue-800 drop-shadow-sm"
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8 }}
+        >
+          {purchase && purchase.length > 0
+            ? `${purchase[0].customerId?.name}'s Purchases`
+            : "Your Purchases"}
+        </motion.h2>
 
-  {purchase.length > 0 && (
-    <motion.h3
-      className="text-xl font-bold text-blue-700"
-      initial={{ opacity: 0, y: -20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.8 }}
-    >
-      Grand Total: ${grandTotal}
-    </motion.h3>
-  )}
-</div>
-
+        {purchase.length > 0 && (
+          <motion.h3
+            className="text-xl font-bold text-blue-700"
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
+          >
+            Grand Total: ${grandTotal}
+          </motion.h3>
+        )}
+      </div>
 
       {isLoading && (
         <p className="text-center text-blue-700 text-lg">
@@ -110,7 +117,7 @@ function PurchasePage() {
                     alt={item.productId?.productName}
                     className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
                   />
-                  {/* Remove button on hover */}
+                  {/* Remove button */}
                   <button
                     onClick={() => handleRemove(item._id)}
                     className="absolute inset-0 m-auto w-32 h-10 bg-red-500 text-white rounded-lg
@@ -121,8 +128,8 @@ function PurchasePage() {
                   </button>
                 </div>
 
+                {/* Product Info */}
                 <div className="p-5 flex-1">
-                  {/* Product info in two columns */}
                   <div className="grid grid-cols-2 gap-2 text-sm text-gray-700 font-medium">
                     <span className="text-blue-800 font-bold truncate">
                       {item.productId?.productName}
@@ -154,7 +161,8 @@ function PurchasePage() {
         )}
       </motion.div>
 
-      
+      {/* ✅ Render Confirm Dialog */}
+      <ConfirmDialog />
     </section>
   );
 }

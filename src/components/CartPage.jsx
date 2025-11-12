@@ -3,10 +3,13 @@ import axiosInstance from "../utils/axiosInstance";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { ShoppingCart } from "lucide-react";
+import { useConfirmDialog } from "../components/common/useConfirmDialog"; // ✅ Import hook
 
 function CartPage() {
   const [cartItems, setCartItems] = useState([]);
   const [totalPrice, setTotalPrice] = useState(0);
+
+  const { ConfirmDialog, confirm } = useConfirmDialog(); // ✅ Initialize hook
 
   // Fetch Cart Items
   const fetchCart = async () => {
@@ -18,9 +21,17 @@ function CartPage() {
       console.error("Error fetching cart:", error);
     }
   };
- console.log("set Cart items", cartItems)
-  // Remove Item
+
+  // Remove Item with confirmation
   const removeFromCart = async (productId) => {
+    const ok = await confirm(
+      "Remove Item",
+      "Are you sure you want to remove this item from your cart?",
+      "Remove",
+      "Cancel"
+    );
+    if (!ok) return;
+
     try {
       await axiosInstance.delete(`/carts/removeCart/${productId}`);
       fetchCart();
@@ -141,6 +152,9 @@ function CartPage() {
           ))}
         </motion.div>
       )}
+
+      {/* ✅ Render Confirm Dialog */}
+      <ConfirmDialog />
     </div>
   );
 }

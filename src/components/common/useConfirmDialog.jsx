@@ -52,24 +52,25 @@ export function useConfirmDialog() {
     resolver(false)
   }
 
-  const ConfirmDialog = (
-    <Dialog open={open} onOpenChange={setOpen}>
-      <DialogContent>
-        <DialogHeader>
-          <DialogTitle>{content.title || "Are you sure?"}</DialogTitle>
-          <DialogDescription>{content.description || "This action cannot be undone."}</DialogDescription>
-        </DialogHeader>
-        <DialogFooter>
-          <Button variant="outline" onClick={handleCancel}>
-            {content.cancelText}
-          </Button>
-          <Button variant="destructive" onClick={handleConfirm}>
-            {content.confirmText}
-          </Button>
-        </DialogFooter>
-      </DialogContent>
-    </Dialog>
-  )
+  const ConfirmDialog = () => (
+  <Dialog open={open} onOpenChange={setOpen}>
+    <DialogContent>
+      <DialogHeader>
+        <DialogTitle>{content.title || "Are you sure?"}</DialogTitle>
+        <DialogDescription>{content.description || "This action cannot be undone."}</DialogDescription>
+      </DialogHeader>
+      <DialogFooter>
+        <Button variant="outline" onClick={handleCancel}>
+          {content.cancelText}
+        </Button>
+        <Button variant="destructive" onClick={handleConfirm}>
+          {content.confirmText}
+        </Button>
+      </DialogFooter>
+    </DialogContent>
+  </Dialog>
+)
+
 
   return { ConfirmDialog, confirm }
 }
