@@ -4,6 +4,7 @@ import { getVendorDeliveries } from "../features/getVendorAssignSlice.jsx";
 import axiosInstance from "../utils/axiosInstance.js";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { useConfirmDialog } from "./common/useConfirmDialog.jsx"// 👈 import here
 
 function GetVendorAssign() {
   const dispatch = useDispatch();
@@ -11,18 +12,27 @@ function GetVendorAssign() {
     (state) => state.vendorDeliveries
   );
 
+  const { ConfirmDialog, confirm } = useConfirmDialog(); // 👈 initialize hook
+
   useEffect(() => {
     dispatch(getVendorDeliveries());
   }, [dispatch]);
 
   const handleDelete = async (purchaseId) => {
+    // 👇 ask for confirmation before deleting
+    const ok = await confirm(
+      "Delete Delivery",
+      "Are you sure you want to delete this delivery? This action cannot be undone."
+    );
+    if (!ok) return; // ❌ if user cancels, stop
+
     try {
       await axiosInstance.delete(`/deliveryAssignment/delivery/${purchaseId}`);
       toast.success("Delivery deleted successfully 🗑️", {
         position: "top-right",
         autoClose: 2000,
       });
-      dispatch(getVendorDeliveries()); // Refresh list
+      dispatch(getVendorDeliveries());
     } catch (err) {
       toast.error(err.response?.data?.message || "Failed to delete delivery ❌", {
         position: "top-right",
@@ -144,6 +154,9 @@ function GetVendorAssign() {
           );
         })}
       </div>
+
+      {/* ✅ Global reusable confirm dialog */}
+      {ConfirmDialog}
     </div>
   );
 }

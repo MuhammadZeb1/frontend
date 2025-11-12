@@ -7,6 +7,7 @@ import { Check, Trash2 } from "lucide-react";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import axiosInstance from "@/utils/axiosInstance";
+import { useConfirmDialog } from "@/components/common/useConfirmDialog"; // ✅ Import ShadCN confirm hook
 
 function GetPurchaseOfVendor() {
   const dispatch = useDispatch();
@@ -14,6 +15,7 @@ function GetPurchaseOfVendor() {
     (state) => state.vendorPurchase
   );
   const navigate = useNavigate();
+  const { ConfirmDialog, confirm } = useConfirmDialog(); // ✅ Hook initialized
 
   useEffect(() => {
     dispatch(getVendorPurchase());
@@ -38,7 +40,12 @@ function GetPurchaseOfVendor() {
 
   const cardVariants = {
     hidden: { opacity: 0, scale: 0.9, y: 30 },
-    show: { opacity: 1, scale: 1, y: 0, transition: { duration: 0.5, ease: "easeOut" } },
+    show: {
+      opacity: 1,
+      scale: 1,
+      y: 0,
+      transition: { duration: 0.5, ease: "easeOut" },
+    },
     exit: { opacity: 0, scale: 0.8, transition: { duration: 0.3 } },
   };
 
@@ -47,7 +54,17 @@ function GetPurchaseOfVendor() {
     navigate(`/giveDelivery/${id}`);
   };
 
+  // ✅ Add confirmation dialog before delete
   const handleRemove = async (id) => {
+    const ok = await confirm(
+      "Delete Purchase Record",
+      "Are you sure you want to delete this purchase? This action cannot be undone.",
+      "Delete",
+      "Cancel"
+    );
+
+    if (!ok) return;
+
     try {
       const res = await axiosInstance.delete(`/purchase/purchase/${id}`);
       toast.success(res.data.message);
@@ -103,7 +120,10 @@ function GetPurchaseOfVendor() {
                 <motion.div
                   key={item._id}
                   variants={cardVariants}
-                  whileHover={{ scale: 1.03, boxShadow: "0px 10px 25px rgba(0,0,0,0.1)" }}
+                  whileHover={{
+                    scale: 1.03,
+                    boxShadow: "0px 10px 25px rgba(0,0,0,0.1)",
+                  }}
                   exit="exit"
                   className="relative bg-white rounded-3xl shadow-md border border-gray-200 overflow-hidden group"
                 >
@@ -172,10 +192,18 @@ function GetPurchaseOfVendor() {
                     </div>
 
                     <div className="grid grid-cols-2 gap-2 bg-blue-50 p-3 rounded-xl shadow-inner text-sm">
-                      <p className="font-medium text-gray-700 truncate">👤 {item.customerName}</p>
-                      <p className="text-gray-500 truncate">📧 {item.customerEmail}</p>
-                      <p className="text-gray-700 truncate">📍 {item.customerAddress}</p>
-                      <p className="text-gray-700 truncate">📞 {item.customerPhone}</p>
+                      <p className="font-medium text-gray-700 truncate">
+                        👤 {item.customerName}
+                      </p>
+                      <p className="text-gray-500 truncate">
+                        📧 {item.customerEmail}
+                      </p>
+                      <p className="text-gray-700 truncate">
+                        📍 {item.customerAddress}
+                      </p>
+                      <p className="text-gray-700 truncate">
+                        📞 {item.customerPhone}
+                      </p>
                     </div>
 
                     <motion.div
@@ -202,6 +230,9 @@ function GetPurchaseOfVendor() {
           )}
         </AnimatePresence>
       </motion.div>
+
+      {/* ✅ Global confirmation dialog mount */}
+      {ConfirmDialog}
     </motion.section>
   );
 }

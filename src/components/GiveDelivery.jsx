@@ -32,6 +32,7 @@ function ApproveDelivery() {
   };
 
   const handleDelete = async (deliveryBoyId) => {
+    console.log(deliveryBoyId)
     if (!window.confirm("Are you sure you want to delete this delivery boy?")) return;
 
     try {
@@ -101,7 +102,8 @@ function ApproveDelivery() {
                     <motion.button whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.95 }} onClick={() => handleAssign(d._id)} className="bg-blue-600 text-white px-4 py-2 rounded-lg shadow-md flex items-center gap-2 font-medium">
                       <CheckCircle className="w-5 h-5" /> Assign Delivery
                     </motion.button>
-                    <motion.button whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.95 }} onClick={() => handleDelete(delivery._id)} className="bg-red-600 text-white px-4 py-2 rounded-lg shadow-md flex items-center gap-2 font-medium">
+                    <motion.button whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.95 }}
+                     onClick={() => handleDelete(delivery.deliveryId?._id)} className="bg-red-600 text-white px-4 py-2 rounded-lg shadow-md flex items-center gap-2 font-medium">
                       Remove
                     </motion.button>
                   </motion.div>

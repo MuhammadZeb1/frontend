@@ -5,7 +5,8 @@ import { toast } from "react-toastify";
 import axiosInstance from "../utils/axiosInstance";
 import { NavLink } from "react-router-dom";
 import { motion } from "framer-motion";
-import { Search } from "lucide-react"; // ✅ Lucide icon
+import { Search } from "lucide-react";
+import { useConfirmDialog } from "@/components/common/useConfirmDialog"; // ✅ Import hook
 
 function ReadProduct() {
   const { product, isLoading, error, message } = useSelector(
@@ -13,14 +14,23 @@ function ReadProduct() {
   );
 
   const dispatch = useDispatch();
-
   const [searchTerm, setSearchTerm] = useState("");
+  const { ConfirmDialog, confirm } = useConfirmDialog(); // ✅ Use hook
 
   useEffect(() => {
     dispatch(getProduct());
   }, [dispatch]);
 
+  // ✅ Wrapped delete with confirm dialog
   const deleteProduct = async (id) => {
+    const ok = await confirm(
+      "Delete Product",
+      "Are you sure you want to delete this product? This action cannot be undone.",
+      "Delete",
+      "Cancel"
+    );
+    if (!ok) return;
+
     try {
       const res = await axiosInstance.delete(`/product/products/${id}`);
       toast.success(res.data.message);
@@ -44,7 +54,6 @@ function ReadProduct() {
     );
   }
 
-  // ✅ Search filter only
   const filteredProducts = product.filter((p) =>
     p.productName?.toLowerCase().includes(searchTerm.toLowerCase())
   );
@@ -61,14 +70,13 @@ function ReadProduct() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-100 via-white to-blue-200 px-6 py-10">
-      {/* ✅ Header Row with Title + Search */} 
+      {/* ✅ Header Row */}
       <motion.div
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.8, ease: "easeOut" }}
         className="flex flex-col md:flex-row justify-between items-center gap-4 mb-10 max-w-6xl mx-auto"
       >
-        {/* Left: Title */}
         <motion.h2
           initial={{ opacity: 0, x: -20 }}
           animate={{ opacity: 1, x: 0 }}
@@ -80,7 +88,6 @@ function ReadProduct() {
             : "Our Products"}
         </motion.h2>
 
-        {/* ✅ Right: Search Bar Only */}
         <motion.div
           initial={{ opacity: 0, x: 20 }}
           animate={{ opacity: 1, x: 0 }}
@@ -104,10 +111,8 @@ function ReadProduct() {
         </motion.div>
       </motion.div>
 
-      {/* Error */}
       {error && <div className="text-red-500 text-center mb-4">{error}</div>}
 
-      {/* ✅ Product Cards */}
       <motion.div
         variants={containerVariants}
         initial="hidden"
@@ -122,7 +127,6 @@ function ReadProduct() {
               whileHover={{ scale: 1.04 }}
               className="relative bg-white/90 backdrop-blur-sm border border-blue-100 rounded-3xl shadow-md hover:shadow-2xl transition-all duration-500 hover:-translate-y-1 overflow-hidden group"
             >
-              {/* Product Image */}
               <div className="relative w-full h-56 overflow-hidden rounded-t-3xl">
                 <img
                   src={p.image?.url}
@@ -133,7 +137,6 @@ function ReadProduct() {
                   {p.category}
                 </span>
 
-                {/* Hover Buttons */}
                 <div className="absolute inset-0 flex items-center justify-center gap-3 bg-black/40 opacity-0 group-hover:opacity-100 transition-all duration-300">
                   <NavLink
                     to={`/updateProduct/${p._id}`}
@@ -150,7 +153,6 @@ function ReadProduct() {
                 </div>
               </div>
 
-              {/* Product Details */}
               <div className="p-5">
                 <h3 className="text-lg font-bold text-blue-900">
                   {p.productName}
@@ -180,6 +182,9 @@ function ReadProduct() {
           </motion.p>
         )}
       </motion.div>
+
+      {/* ✅ Reusable confirmation dialog */}
+      {ConfirmDialog}
     </div>
   );
 }
